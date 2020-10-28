@@ -11,9 +11,9 @@ import re
 import string
 
 frequency = {}
-document_text = open('com_cheese_api/user/datausers.csv', 'r')
+document_csv = open('com_cheese_api/user/data/users.csv', 'r')
 
-text_string = document_text.read().lower()
+text_string = document_csv.read().lower()
 match_pattern = re.findall(r'\b[a-z]{3,15}\b', text_string)
 
 for word in match_pattern:
