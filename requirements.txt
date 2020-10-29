@@ -25,3 +25,4 @@ konlpy==0.5.2
 pytagcloud==0.3.5
 pygame==1.9.6
 simplejson==3.17.2
+flask-http-response==0.0.1.0
