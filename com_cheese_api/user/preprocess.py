@@ -10,17 +10,9 @@
 import re
 import string
 
-frequency = {}
 document_csv = open('com_cheese_api/user/data/users.csv', 'r')
 
-text_string = document_csv.read().lower()
-match_pattern = re.findall(r'\b[a-z]{3,15}\b', text_string)
+lists = document_csv.readlines()
+document_csv.close()
 
-for word in match_pattern:
-    count = frequency.get(word, 0)
-    frequency[word] = count + 1
-
-frequency_list = frequency.keys()
-
-for words in frequency_list:
-    print (words, frequency[words])
+lists
