@@ -41,7 +41,7 @@ class UserService:
         
         self.odf = None
 
-    def hook(self):
+    def hook(self):파일 경로 또는 디렉토리와 관련한 코드가 많이 필요합니다. 파일 및 디렉토리 경로에 관한 함수는 모두 os 모듈을 사용하기 때문에 os 모듈의 import가 필요합니다. 직접 쳐보면서 따라하길 권장합니다. (하단 코드에선 import os를 생략합니다.)
         train = 'train.csv'
         test = 'test.csv'
         this = self.fileReader

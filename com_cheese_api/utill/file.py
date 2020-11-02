@@ -30,3 +30,5 @@ class FileReader:
 
     def json_load(self):
         return json.load(open(self.new_file(), encoding='UTF-8'))
+
+    

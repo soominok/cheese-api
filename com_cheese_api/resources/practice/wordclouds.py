@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from com_cheese_api.util.file import FileReader
+# from com_cheese_api.util.file import FileReader
 from konlpy.tag import Okt
 from collections import Counter
 from wordcloud import WordCloud
@@ -62,4 +62,4 @@ def make_wordcloud():
         plt.imshow(cloud)
         return plt.show()
 
-    #make_wordcloud()
+make_wordcloud()
