@@ -10,11 +10,10 @@ users = pd.read_csv("com_cheese_api/resources/data/users.csv")
 # print(users)
 
 def itemList_count():
-    # fm.get_fontconfig_fonts()
     # font_location = '/usr/share/fonts/truetype/nanum/NanumBarunGothicBold.ttf'
     # font_name = fm.FontProperties(fname = font_location).get_name()
     # plt.rc('font', family=font_name)
-    plt.rc('font', family='NanumBarunGothicBold')
+    # plt.rc('font', family='NanumBarunGothicBold')
 
     item_count_plot = sns.barplot (x = users['sub1_category'].value_counts().index, y = users['sub1_category'].value_counts().values, data = users)
     # item_count_plot.set_title('아이템 카테고리별 빈도 수', fontproperties=font_name)
