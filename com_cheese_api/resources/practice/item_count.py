@@ -24,7 +24,7 @@ def category_Count():
 def item_count():
     # for category_num in range(len(category_lists)):
     #     if data_category_list in category_lists[category_num]:
-    item_size = users['sub1_category'].groupby(users['cheese_name']).size()
+    item_size = users.groupby(['sub1_category','cheese_name'].groupby(users['cheese_name']).size()
     print(item_size)
 
 item_count()
