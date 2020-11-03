@@ -2,7 +2,7 @@ import setuptools
 # root directory 에서 pip install .
 with open("README.md","r") as fh:
     long_description  = fh.read()
-setuptools.setup(
+    setuptools.setup(
     name='com_cheese_api',
     version='1.0',
     description='Python Distribution Utilities',
