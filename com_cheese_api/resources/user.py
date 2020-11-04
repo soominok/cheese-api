@@ -3,13 +3,25 @@ import pandas as pd
 from com_cheese_api.util.file import FileReader
 from pathlib import Path
 
+from konlpy.tag import Okt
+from collections import Counter
+from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import seaborn as sns
 
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold  # k value is understood as count
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier # rforest
+from sklearn.tree import DecisionTreeClassifier # dtree
+from sklearn.ensemble import RandomForestClassifier # rforest
+from sklearn.naive_bayes import GaussianNB # nb
+from sklearn.neighbors import KNeighborsClassifier # knn
+from sklearn.svm import SVC # svm
 
 import os
+import json
 
 class UserDf:
     def __init__(self):
@@ -18,8 +30,7 @@ class UserDf:
         self.user = None
         self.odf = None
 
-    #------------------------------------------ 데이터셋 1차 정제 ------------------------------------------#
-
+    
     def new_model(self, payload):
         this = self.fileReader
         this.data = self.data
@@ -52,6 +63,9 @@ class UserDf:
         # 30대(1만5천) > 40대(1만4천) > 20대(3천5백) > 50대(3천1백) > 60대(523) > 10대=70대(80) >80대
         print(show_age_plot)
 
+        show_wordcloud = self.make_wordcloud(this.user)
+        print(show_wordcloud)
+
         return this
 
 
@@ -73,9 +87,6 @@ class UserDf:
                 'password': '1'
             }
         )
-
-        train_find_null = self.find_null(this.train)
-        test_find_null = self.find_null(this.test)
         
         # print(test_find_null)
         
@@ -84,18 +95,51 @@ class UserDf:
         # print(f'Preprocessing Train Variable : {this.train.columns}')
         # print(f'Preprocession Test Variable : {this.test.columns}')
         
+
         this = self.cheese_rank_oridinal(this)
         this = self.user_gender_norminal(this)
         this = self.user_age_norminal(this)
-        print(this)
+        this = self.cheese_code_ordinal(this)
+        this = self.buy_count_numeric(this)
+        this = self.cheese_category_nominal(this)
+        this = self.cheese_texture_nominal(this)
 
+        show_corr = self.make_corr(this.train)
+        print(show_corr)
+
+        this = self.drop_feature(this, 'user_index')
+        this = self.drop_feature(this, 'cheese_brand')
+        this = self.drop_feature(this, 'cheese_code')
+        this = self.drop_feature(this, 'cheese_name')
+        this = self.drop_feature(this, 'cheese_types')
+
+        this = self.drop_feature(this, 'cheese_rank')
+
+        this.label = self.create_label(this) # payload
+        this.train = self.create_train(this) # payload    
+
+        this.train.to_csv(os.path.join('com_cheese_api/resources/data', 'train22.csv'), index=False)
+       
+
+        print(f'######## train na 체크 ##########')
+        print(f'{this.train.isnull().sum()}')
+        print(f'######## test na 체크 ##########')
+        print(f'{this.train.isnull().sum()}')
+
+        print(f'######## data type 체크 ##########')
+        print(this.train.dtypes)
+        # print(this)
+
+        learning = self.learning(this.train, this.test)
+        print(learning)
+
+        submit = self.submit(this.train, this.test)
+        print(submit)
         
-        # 변수들 수치로 바꾸고 해보기
-        #show_corr = self.make_corr(this.train)
 
 
 
-
+    #------------------------------------------ 데이터셋 1차 정제 ------------------------------------------#
 
     @staticmethod
     def make_barplot(x_name, y_name, data_name):
@@ -158,10 +202,7 @@ class UserDf:
         user_test.to_csv(os.path.join('com_cheese_api/resources/data', 'user_test.csv'), index=False)
         return user_train, user_test
 
-    @staticmethod
-    def find_null(data):
-        null_num = data.isnull().sum()
-        return null_num
+
 
     #-------------------------------------------데이터 2차 정제-------------------------------------------#
     
@@ -213,12 +254,12 @@ class UserDf:
             4: 'Adult50',
             5: 'Senior'
         }
-        for x in range(len(train['age_group'])):
-            if train['age_group'][x] == 'Unknown':
-                train['age_group'][x] = age_title_mapping[train['Title'][x]]
-        for x in range(len(test['age_group'])):
-            if test['age_group'][x] == 'Unknow':
-                test['age_group'][x] = age_title_mapping[test['Title'][x]]
+        # for x in range(len(train['age_group'])):
+        #     if train['age_group'][x] == 'Unkown':
+        #         train['age_group'][x] = age_title_mapping[train['Title'][x]]
+        # for x in range(len(test['age_group'])):
+        #     if test['age_group'][x] == 'Unkown':
+        #         test['age_group'][x] = age_title_mapping[test['Title'][x]]
 
         age_mapping = {
             'Youth': 1,
@@ -233,21 +274,212 @@ class UserDf:
         this.test = this.test
         return this
 
+    @staticmethod
+    def cheese_code_ordinal(this) -> object:
+        return this
 
+#######################더미변수로?! 여쭤보기~~###############################
+    # @staticmethod
+    # def cheese_brand_nominal(this) -> object:
+    #     train = this.train
+    #     test = this.test
+
+    #     train[]
+
+    @staticmethod
+    def buy_count_numeric(this) -> object:
+        return this
+
+    @staticmethod
+    def cheese_category_nominal(this) -> object:
+        this.train['cheese_category_code'] = this.train['cheese_category'].map({
+            '모짜렐라': 1,
+            '블루치즈': 2,
+            '리코타': 3,
+            '체다': 4,
+            '파르미지아노 레지아노': 5,
+            '고다': 6,
+            '까망베르': 7,
+            '브리': 8,
+            '만체고': 9,
+            '에멘탈': 10,
+            '부라타': 11
+        })
+
+        this.test['cheese_category_code'] = this.test['cheese_category'].map({
+            '모짜렐라': 1,
+            '블루치즈': 2,
+            '리코타': 3,
+            '체다': 4,
+            '파르미지아노 레지아노': 5,
+            '고다': 6,
+            '까망베르': 7,
+            '브리': 8,
+            '만체고': 9,
+            '에멘탈': 10,
+            '부라타': 11
+        })
+        return this
+
+    @staticmethod
+    def cheese_texture_nominal(this) -> object:
+        this.train['cheese_texture_code'] = this.train['cheese_texture'].map({
+            '후레쉬치즈': 1,
+            '세미하드치즈': 2,
+            '세미하드': 2,
+            '하드치즈': 3,
+            '소프트치즈': 4,
+            '연성치즈': 5,
+            '경성치즈': 6
+        })
+
+        this.test['cheese_texture_code'] = this.test['cheese_texture'].map({
+            '후레쉬치즈': 1,
+            '세미하드치즈': 2,
+            '세미하드': 2,
+            '하드치즈': 3,
+            '소프트치즈': 4,
+            '연성치즈': 5,
+            '경성치즈': 6
+        })
+        return this
+
+
+    # @staticmethod
+    # def cheese_one_price_numeric(this) -> object:
+
+
+    #------------------------------------------ 데이터 탐색 & 시각화 ------------------------------------------#
+    @staticmethod
+    def make_wordcloud(data):
+        user_df = data.loc[:,['cheese_name']]
+        user_lists = np.array(user_df['cheese_name'].tolist())
+                
+        with open('com_cheese_api/resources/data/stopword.txt', 'r') as file:
+            lines = file.readlines()
+            stop_str = ''.join(lines)
+            stopword = stop_str.replace('\n', ' ')
+        stopwords = stopword.split(' ')
+
+        sentences_tag = []
+        
+        okt = Okt()
+
+        #형태소 분석하여 리스트에 넣기
+        for sentence in user_lists:
+            morph = okt.pos(sentence)
+            sentences_tag.append(morph)
+            #print(morph)
+            #print('-' * 30)
+        
+        #print(sentences_tag)
+        #print('\n' * 3)
+        
+        noun_adj_list = []
+        #명사와 형용사만 구분하여 이스트에 넣기
+        for sentence1 in sentences_tag:
+            for word, tag in sentence1:
+                if word not in stopwords:
+                    if tag in ['Noun']:
+                        if len(word) >= 2:
+                            noun_adj_list.append(word)
+                        
+        
+        word_count_list = []
+        #형태소별 count
+        counts = Counter(noun_adj_list)
+        tags = counts.most_common(100)
+        word_count_list.append(tags)
+        word_list = sum(word_count_list, [])
+        print(word_list)
+        print(type(word_list))
+    
+        # wordCloud 생성
+        # 한글 깨지는 문제 해결하기 위해 font_path 지정
+        wc = WordCloud(font_path='/usr/share/fonts/truetype/nanum/NanumBarunGothicBold.ttf', background_color='white', width=800, height=600)
+        #print(dict(tags))
+        cloud = wc.generate_from_frequencies(dict(tags))
+        plt.figure(figsize=(10, 8))
+        plt.axis('off')
+        plt.imshow(cloud)
+        return plt.show()
 
 
     @staticmethod
-    def make_Corr(data):
+    def make_corr(data):
         make_corr = data.corr()
-        return 
-
-    @staticmethod
-    def make_heatmap(make_corr):
-        sns.clustermap(make_corr, annot = True, cmap = 'RdylBu_r', mask = mask, linewidths = .5, cbar_kws = {"shrink": .5}, vmin = -1, vmax = 1)
+        sns.clustermap(make_corr, annot = True, cmap = 'RdYlBu_r', linewidths=.5, cbar_kws={"shrink": .5}, vmin = -1, vmax = 1)
         plt.show()
 
 
+    # Dtree, rforest, nb, nnn, svm among Learning Algorithms use this as a representative
 
+    @staticmethod
+    def create_k_fold():
+        return KFold(n_splits = 10, shuffle = True, random_state = 0)
+
+    def accuracy_by_dtree(self, this):
+        dtree = DecisionTreeClassifier()
+        score = cross_val_score(dtree, this.train, this.label, cv = UserDf.create_k_fold(), \
+                n_jobs = 1, scoring = 'accuracy')
+        return round(np.mean(score) * 100, 2)
+
+    def accuracy_by_rforest(self, this):
+        rforest = RandomForestClassifier()
+        score = cross_val_score(rforest, this.train, this.label, cv=UserDf.create_k_fold(), \
+                n_jobs = 1, scoring = 'accuracy')
+        return round(np.mean(score) * 100, 2)
+
+    def accuracy_by_knn(self, this):
+        knn = KNeighborsClassifier()
+        score = cross_val_score(knn, this.train , this.label, cv = UserDf.create_k_fold(), \
+                n_jobs = 1, scoring = 'accuracy')
+        return round(np,mean(score) * 100, 2)
+
+    def accuracy_by_svm(self, this):
+        svm = SVC()
+        score = cross_val_score(svm, this.train, this.label, cv = UserDf.create_k_fold(), \
+                n_jobs = 1, scoring = 'accuracy')
+        return round(np.mean(score) * 100, 2)
+
+
+    def modeling(self, train, test):
+        this = self.new(train, test)
+        this.label = self.create_label(this)
+        this.train = self.create_train(this)
+        print(f'>> Train 변수 : {this.train.columns}')
+        print(f'>> Test 변수 : {this.train.columns}')
+        return this
+
+    def learning(self, train, test):
+        service = self.service
+        this = self.modeling(train,test)
+        print(f'Dtree verification result: {service.accuracy_by_dtree(this)}')
+        print(f'RForest verification result: {service.accuracy_by_rforest(this)}')
+        print(f'Naive Bayes tree verification result: {service.accuracy_by_nb(this)}')
+        print(f'KNN verification result: {service.accuracy_by_knn(this)}')
+        print(f'SVM verification result: {service.accuracy_by_svm(this)}')
+
+    def submit(self, train, test):
+        this = self.modeling(train, test)
+        clf = RandomForestClassifier()
+        clf.fit(this.train, this.label)
+        prediction = clf.prdict(this.test)
+
+        print(this)
+
+        df = pd.DataFrame(
+            {
+                'gender': this.train.user_gender,
+                'age_group': this.train.age_group,
+                'cheese_texture': this.train.cheese_texture_code,
+                'buy_count': this.train.buy_count
+            }
+        )
+
+        sumdf = pd.concat([self.odf, df], axis = 1)
+        print(sumdf)
+        return sumdf
 
 
 if __name__ == '__main__':
@@ -257,84 +489,92 @@ if __name__ == '__main__':
 
 
 
+'''
+        user_id password  gender  age_group  cheese_texture  buy_count
+0      1751881        1       1        1.0               1          2
+1      1835210        1       1        1.0               1          2
+2      5824726        1       1        3.0               1          1
+3      1752218        1       0        2.0               1          3
+4      2034072        1       1        2.0               1          1
+...        ...      ...     ...        ...             ...        ...
+25806  1718175        1       1        NaN               1          1
+25807  2155344        1       1        2.0               4          1
+25808  5939075        1       1        1.0               2          3
+25809  4959284        1       1        1.0               1          1
+25810  1747758        1       1        3.0               2          1
 
-#     @staticmethod
-#     def create_label(this):
-#         return this.train['cheese_category'] # Label = answer
-
-#     @staticmethod
-#     def drop_feature(this, feature):
-#         this.train = this.train.drop([feature], axis = 1)
-#         this.test = this.test.drop([feature], axis = 1)
-#         return this
-        
-#     @staticmethod
-#     def gender_norminal(this):
-#         combine = [this.train, this.test]
-#         gender_mapping = {'male': 0, 'female': 1}
-#         for dataset in combine:
-#             dataset['user_gender'] = dataset['user_gender'].map(gender_mapping)
-#         this.train = this.train
-#         this.test = this.test
-#         return this
+[25811 rows x 6 columns]
+'''
 
 
+# 2. 모델링 (Dto)
+# ==============================================================
+# =======================                =======================
+# =======================    Modeling    =======================
+# =======================                =======================
+# ==============================================================
+
+class UserDto():
+    __tablename__ = 'users'
+    __table_args__ = {'mysql_collate':'utf8_general_ci'}
+
+    user_id: str = db.Column(db.String(20))
+    password: str = db.Column(db.String(1))
+    gender: int = db.Column(db.Integer)
+    age_group: int = db.Column(db.Integer)
+    cheese_texture: int = db.Column(db.Integer)
+    buy_count: int = db.Column(db.Integer)
+
+    # orders = db.relationship('OrderDto', back_populates='user', lazy='dynamic')
+    # prices = db.relationship('PriceDto', back_populates='user', lazy='dynamic')
+    # articles = db.relationship('ArticleDto', back_populates='user', lazy='dynamic')
+
+    def __init__(self, user_id, password, gender, age_group, cheese_texture, buy_count):
+        self.user_id = user_id
+        self.password = password
+        self.gender = gender
+        self.age_group = age_group
+        self.cheese_texture = cheese_texture
+        self.buy_count = buy_count
+
+    def __repr__(self):
+        return f'User(user_id={self.user_id}, password={self.password}, \
+                    name={self.name}, gender = {self.gender}, age_group={self.age_group}, \
+                    cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
+
+    def __str__(self):
+        return f'User(user_id={self.user_id}, password={self.password}, \
+                    name={self.name}, gender = {self.gender}, age_group={self.age_group}, \
+                    cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
+
+    def json(self):
+        return {
+            'userId' : self.user_id,
+            'password': self.password,
+            'gender': self.gender,
+            'age_group': self.age_group,
+            'cheese_texture': self.cheese_texture,
+            'buy_count': self.buy_count
+        }
+
+# Json 형태로 쓰기 위해 씀!
+class UserVo():
+    user_id: str = ''
+    password: str = ''
+    gender: int = 0
+    age_group: int = 0
+    cheese_texture: int = 0
+    buy_count: int = 0
 
 
-# if __name__ == '__main__':
-#     UserDf.show_User_Df()
+# 텐서플로우가 걸리는 곳
+class UserTf():
+    ...
 
-# #------------------------------------------ 데이터 탐색 & 시각화 ------------------------------------------#
+# 인공지능 판단해주는 곳
+class UserAi():
+    ...
 
-#     # def make_wordcloud(self):
-#     #     user_data = show_df()
-#     #     user_df = _data.loc[:,['cheese_name']]
-#     #     user_lists = np.array(user_df['cheese_name'].tolist())
-                
-#     #     with open('com_cheese_api/user/data/stopword.txt', 'r') as file:
-#     #         lines = file.readlines()
-#     #         stop_str = ''.join(lines)
-#     #         stopword = stop_str.replace('\n', ' ')
-#     #     stopwords = stopword.split(' ')
-
-#     #     sentences_tag = []
-        
-#     #     #형태소 분석하여 리스트에 넣기
-#     #     for sentence in _lists:
-#     #         morph = self.okt.pos(sentence)
-#     #         sentences_tag.append(morph)
-#     #         #print(morph)
-#     #         #print('-' * 30)
-        
-#     #     #print(sentences_tag)
-#     #     #print('\n' * 3)
-        
-#     #     noun_adj_list = []
-#     #     #명사와 형용사만 구분하여 이스트에 넣기
-#     #     for sentence1 in sentences_tag:
-#     #         for word, tag in sentence1:
-#     #             if word not in stopwords:
-#     #                 if tag in ['Noun']:
-#     #                     if len(word) >= 2:
-#     #                         noun_adj_list.append(word)
-                        
-        
-#     #     word_count_list = []
-#     #     #형태소별 count
-#     #     counts = Counter(noun_adj_list)
-#     #     tags = counts.most_common(100)
-#     #     word_count_list.append(tags)
-#     #     word_list = sum(word_count_list, [])
-#     #     print(word_list)
-#     #     print(type(word_list))
-    
-#     #     # wordCloud 생성
-#     #     # 한글 깨지는 문제 해결하기 위해 font_path 지정
-#     #     wc = WordCloud(font_path='/usr/share/fonts/truetype/nanum/NanumBarunGothicBold.ttf', background_color='white', width=800, height=600)
-#     #     #print(dict(tags))
-#     #     cloud = wc.generate_from_frequencies(dict(tags))
-#     #     plt.figure(figsize=(10, 8))
-#     #     plt.axis('off')
-#     #     plt.imshow(cloud)
-#     #     return plt.show()
-
+Session = openSession()
+session = Session()
+user_df = UserDf()
