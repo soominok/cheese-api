@@ -10,14 +10,12 @@ config = {
     'password': '456123',
     'host': '127.0.0.1',
     'port': '3306',
-    'database': 'come_cheese_api'
+    'database': 'com_cheese_api'
 }
 
 charset = {'utf8':'utf8'}
 
 url = f"mysql+mysqlconnector://{config['user']}:{config['password']}@{config['host']}:{config['port']}/{config['database']}?charset=utf8"
-Base = declaractive_base()
-engine = create_engine(url)
 
 def openSession():
     return sessionmaker(bind=engine)

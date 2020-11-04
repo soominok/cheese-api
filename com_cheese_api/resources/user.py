@@ -2,14 +2,14 @@ import numpy as np
 import pandas as pd
 from com_cheese_api.util.file import FileReader
 from pathlib import Path
-
+from com_cheese_api.ext.db import url, db
 from konlpy.tag import Okt
 from collections import Counter
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import seaborn as sns
-
+from sqlalchemy.ext.declarative import declarative_base
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold  # k value is understood as count
 from sklearn.model_selection import cross_val_score
@@ -23,7 +23,38 @@ from sklearn.svm import SVC # svm
 import os
 import json
 
+'''
+'''
+
+from datetime import datetime
+from flask import Flask, render_template, url_for, flash, redirect
+from flask_sqlalchemy import SQLAlchemy
+
+
+
+app = Flask(__name__)
+
+config = {
+    'user': 'bitai',
+    'password': '456123',
+    'host': '127.0.0.1',
+    'port': '3306',
+    'database': 'com_cheese_api'
+}
+
+charset = {'utf8':'utf8'}
+
+url = f"mysql+mysqlconnector://{config['user']}:{config['password']}@{config['host']}:{config['port']}/{config['database']}?charset=utf8"
+
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = url
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+
 class UserDf:
+
     def __init__(self):
         self.fileReader = FileReader()
         self.data = os.path.join(os.path.abspath(os.path.dirname(__file__))+'/data')
@@ -96,15 +127,15 @@ class UserDf:
         # print(f'Preprocession Test Variable : {this.test.columns}')
         
 
-        this = self.cheese_rank_oridinal(this)
-        this = self.user_gender_norminal(this)
-        this = self.user_age_norminal(this)
-        this = self.cheese_code_ordinal(this)
-        this = self.buy_count_numeric(this)
-        this = self.cheese_category_nominal(this)
-        this = self.cheese_texture_nominal(this)
+        this = UserDf.cheese_rank_oridinal(this)
+        this = UserDf.user_gender_norminal(this)
+        this = UserDf.user_age_norminal(this)
+        this = UserDf.cheese_code_ordinal(this)
+        this = UserDf.buy_count_numeric(this)
+        this = UserDf.cheese_category_nominal(this)
+        this = UserDf.cheese_texture_nominal(this)
 
-        show_corr = self.make_corr(this.train)
+        show_corr = UserDf.make_corr(this.train)
         print(show_corr)
 
         this = self.drop_feature(this, 'user_index')
@@ -130,11 +161,29 @@ class UserDf:
         print(this.train.dtypes)
         # print(this)
 
-        learning = self.learning(this.train, this.test)
-        print(learning)
+        # learning = self.learning(this.train, this.test)
+        # print(learning)
 
-        submit = self.submit(this.train, this.test)
-        print(submit)
+        # submit = self.submit(this.train, this.test)
+        # print(submit)
+
+
+        df = pd.DataFrame(
+            {
+                'gender': this.train.user_gender,
+                'age_group': this.train.age_group,
+                'cheese_texture': this.train.cheese_texture_code,
+                'buy_count': this.train.buy_count
+            }
+        )
+
+        sumdf = pd.concat([self.odf, df], axis = 1)
+        print(sumdf)
+        return sumdf
+
+
+
+
         
 
 
@@ -482,10 +531,6 @@ class UserDf:
         return sumdf
 
 
-if __name__ == '__main__':
-    userDf = UserDf()
-    userDf.new()
-
 
 
 
@@ -514,11 +559,11 @@ if __name__ == '__main__':
 # =======================                =======================
 # ==============================================================
 
-class UserDto():
+class UserDto(db.Model):
     __tablename__ = 'users'
     __table_args__ = {'mysql_collate':'utf8_general_ci'}
 
-    user_id: str = db.Column(db.String(20))
+    user_id: str = db.Column(db.String(20), primary_key= True, index = True)
     password: str = db.Column(db.String(1))
     gender: int = db.Column(db.Integer)
     age_group: int = db.Column(db.Integer)
@@ -575,6 +620,9 @@ class UserTf():
 class UserAi():
     ...
 
-Session = openSession()
-session = Session()
-user_df = UserDf()
+db.init_app(app)
+with app.app_context():
+    db.create_all()
+
+
+    
