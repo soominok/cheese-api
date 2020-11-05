@@ -493,7 +493,7 @@ session = Session()
     
 
 class UserDao(UserDto):
-    @staticmethod   
+    @classmethod   
     def bulk():
         userDf = UserDf()
         df = userDf.new()

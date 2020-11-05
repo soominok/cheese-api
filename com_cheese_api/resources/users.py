@@ -382,12 +382,12 @@ class UserDf:
         })
         return this
 
-    @staticmethod
-    def user_no(data, column1):
-        data_lists = range(len(data[column1]))
-        for langes in data_lists:
-            data['user_no'] += 1
-        return data
+    # @staticmethod
+    # def user_no(data, column1):
+    #     data_lists = range(len(data[column1]))
+    #     for langes in data_lists:
+    #         data['user_no'] += 1
+    #     return data
 
 
 
@@ -633,8 +633,7 @@ with app.app_context():
     
 
 class UserDao(UserDto):
-
-    @staticmethod   
+    @staticmethod
     def bulk():
         userDf = UserDf()
         df = userDf.new()
@@ -642,6 +641,47 @@ class UserDao(UserDto):
         session.bulk_insert_mappings(UserDto, df.to_dict(orient="records"))
         session.commit()
         session.close()
+
+    @staticmethod
+    def save(user):
+        session.add(user)
+        session.commit()
+
+    @classmethod
+    def update(cls, user):
+        session.query(cls).filter(cls.user_index == user['user_index'])\
+            .update({cls.password: user['password']})
+        session.commit()
+
+    @classmethod
+    def delete(cls, user_id):
+        data = cls.query.get(user_index)
+        db.session.delete(data)
+        db.session.commit()
+
+    @classmethod
+    def count(cls):
+        return session.query(func.count(cls.user_index)).one()
+
+    @classmethod
+    def find_all(cls):
+        # sql = cls.query
+        # df = pd.read_sql(sql.statement, sql.session.bind)
+        # return json.loads(df.to_json(orient='records'))
+        return session.query(cls).all()
+
+    '''
+    SELECT * FROM users
+    WHERE user_name LIKE a
+    '''
+
+    @classmethod
+    def login(cls, user):
+        return session.query(cls)\
+            .filter(cls.user_id == user.user_id,
+                cls.password == user.password).one()
+
+
 
 if __name__ == '__main__':
     UserDao.bulk()
