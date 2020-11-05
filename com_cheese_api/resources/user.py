@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from com_cheese_api.util.file import FileReader
 from pathlib import Path
-from com_cheese_api.ext.db import url, db
+from com_cheese_api.ext.db import url, db, openSession, engine
 from konlpy.tag import Okt
 from collections import Counter
 from wordcloud import WordCloud
@@ -30,7 +30,8 @@ from datetime import datetime
 from flask import Flask, render_template, url_for, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 
-
+Session = openSession()
+session = Session()
 
 app = Flask(__name__)
 
@@ -179,15 +180,13 @@ class UserDf:
 
         sumdf = pd.concat([self.odf, df], axis = 1)
         print(sumdf)
+        
         return sumdf
 
 
 
 
-        
-
-
-
+    
     #------------------------------------------ 데이터셋 1차 정제 ------------------------------------------#
 
     @staticmethod
@@ -292,7 +291,7 @@ class UserDf:
         train = this.train
         test = this.test
 
-        bins = [20, 30, 40, 50, np.inf]
+        bins = [20, 30, 40, 50, 60]
         labels = ['Youth', 'Adult30', 'Adult40', 'Adult50' 'Senior']
         train['age_group'] = pd.cut(train['user_age'], bins, labels = labels)
         test['age_group'] = pd.cut(test['user_age'], bins, labels = labels)
@@ -551,6 +550,10 @@ class UserDf:
 [25811 rows x 6 columns]
 '''
 
+# if __name__ == '__main__':
+#     userDf = UserDf()
+#     userDf.new()
+
 
 # 2. 모델링 (Dto)
 # ==============================================================
@@ -620,9 +623,23 @@ class UserTf():
 class UserAi():
     ...
 
-db.init_app(app)
-with app.app_context():
-    db.create_all()
+# db.init_app(app)
+# with app.app_context():
+#     db.create_all()
 
 
     
+
+class UserDao(UserDto):
+
+    @staticmethod   
+    def bulk():
+        userDf = UserDf()
+        df = userDf.new()
+        print(df.head())
+        session.bulk_insert_mappings(UserDto, df.to_dict(orient="records"))
+        session.commit()
+        session.close()
+
+if __name__ == '__main__':
+    UserDao.bulk()
