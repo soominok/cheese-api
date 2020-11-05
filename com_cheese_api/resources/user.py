@@ -20,38 +20,9 @@ from sklearn.naive_bayes import GaussianNB # nb
 from sklearn.neighbors import KNeighborsClassifier # knn
 from sklearn.svm import SVC # svm
 
+
 import os
 import json
-
-'''
-'''
-
-from datetime import datetime
-from flask import Flask, render_template, url_for, flash, redirect
-from flask_sqlalchemy import SQLAlchemy
-
-Session = openSession()
-session = Session()
-
-app = Flask(__name__)
-
-config = {
-    'user': 'bitai',
-    'password': '456123',
-    'host': '127.0.0.1',
-    'port': '3306',
-    'database': 'com_cheese_api'
-}
-
-charset = {'utf8':'utf8'}
-
-url = f"mysql+mysqlconnector://{config['user']}:{config['password']}@{config['host']}:{config['port']}/{config['database']}?charset=utf8"
-
-
-
-app.config['SQLALCHEMY_DATABASE_URI'] = url
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 
 class UserDf:
@@ -59,10 +30,116 @@ class UserDf:
     def __init__(self):
         self.fileReader = FileReader()
         self.data = os.path.join(os.path.abspath(os.path.dirname(__file__))+'/data')
-        self.user = None
         self.odf = None
 
-    
+    def new(self):
+        user = 'users.csv'
+        cheese = 'cheese_data.csv'
+        this = self.fileReader
+        this.user = self.new_model(user) # payload
+        this.cheese = self.new_model(cheese)
+
+        # print(this.user_origin)
+        # print(this.cheese)
+
+        print(this)
+
+        category_count = UserDf.category_Count(this.user)
+        item_count = UserDf.item_Count(this.user, category_count)
+        this.user = UserDf.change_to_cheese(this.cheese, item_count)
+        print(f'######## 치즈 상품 대체 체크 ##########')
+
+        # this.user = self.new_model(user)
+        
+        print(this)
+
+        this = UserDf.user_gender_norminal(this)
+        this = UserDf.cheese_rank_oridinal(this)
+
+        # print(min(this.user['user_age'])) # 고객 최소 나이 : 10
+        # print(max(this.user['user_age'])) # 고객 최대 나이 : 80
+        this = UserDf.user_age_norminal(this)
+        print(f'######## age 전처리 체크 ##########')
+        print(this.user.head(10))
+        this = UserDf.cheese_code_ordinal(this)
+        this = UserDf.buy_count_numeric(this)
+        this = UserDf.cheese_category_nominal(this)
+        this = UserDf.cheese_texture_nominal(this)
+
+        print(f'Preprocessing User Dataset : {this.user}')
+
+        print(f'######## train na 체크 ##########')
+        print(f'{this.user.isnull().sum()}')
+        print(f'######## test na 체크 ##########')
+        print(f'{this.user.isnull().sum()}')
+        print(f'######## data type 체크 ##########')
+        print(this.user.dtypes)        
+
+
+        user_split = UserDf.user_data_split(this.user)
+
+        train = 'user_train.csv'
+        test = 'user_test.csv'
+        this.train = self.new_model(train) # payload
+        this.test = self.new_model(test) # payload
+        print(f'Check Train Dataset : {this.train.head(5)}')
+        print(f'Check Test Dataset : {this.test.head(5)}')
+        # print(f'Preprocessing Train Variable : {this.train.columns}')
+        # print(f'Preprocession Test Variable : {this.test.columns}')
+        
+        self.odf = pd.DataFrame(
+            {
+                'user_id': this.train.user_id,
+                'password': '1'
+            }
+        )
+
+        print(self.odf)
+
+        this.id = this.test['user_id'] # This becomes a question.
+        
+        # show_age_plot = UserDf.find_requency(this.user, 'user_index', 'user_age') 
+        # 30대(1만5천) > 40대(1만4천) > 20대(3천5백) > 50대(3천1백) > 60대(523) > 10대=70대(80) >80대
+        
+        # print(show_age_plot)
+
+        # show_wordcloud = self.make_wordcloud(this.user)
+        # print(show_wordcloud)
+
+        show_corr = UserDf.make_corr(this.train)
+
+        # this = UserDf.drop_feature(this, 'user_index')
+        this = UserDf.drop_feature(this, 'cheese_brand')
+        this = UserDf.drop_feature(this, 'cheese_code')
+        this = UserDf.drop_feature(this, 'cheese_name')
+        this = UserDf.drop_feature(this, 'cheese_types')
+
+        this = UserDf.drop_feature(this, 'cheese_rank')
+
+        this.label = UserDf.create_label(this) # payload
+        this.train = UserDf.create_train(this) # payload    
+
+        df = pd.DataFrame(
+            {
+                'gender': this.train.gender,
+                'age_group': this.train.age_group,
+                'cheese_texture': this.train.cheese_texture_code,
+                'buy_count': this.train.buy_count
+            }
+        )
+
+        sumdf = pd.concat([self.odf, df], axis = 1)
+        print('######## train 데이터 전처리 완료 체크 ##########')
+        print(sumdf) # train 데이터만 추출했기 때문에 25811개
+        sumdf.to_csv(os.path.join('com_cheese_api/resources/data', 'users_data.csv'), index=False, encoding='utf-8-sig')
+        
+        return sumdf
+
+
+
+
+####################### 데이터 불러오기 & 생성 & featrue 제거 #######################
+
     def new_model(self, payload):
         this = self.fileReader
         this.data = self.data
@@ -71,133 +148,25 @@ class UserDf:
         print(f'{this.fname}')
         return pd.read_csv(Path(self.data, this.fname))
 
+    @staticmethod
+    def create_train(this) -> object:
+        return this.train.drop('cheese_category', axis=1) # Train is a dataset in which the answer is removed. 
 
-    def user_hook(self):
-        user_origin = 'users.csv'
-        cheese = 'cheese_data.csv'
-        this = self.fileReader
-        this.user_origin = self.new_model(user_origin) # payload
-        this.cheese = self.new_model(cheese)
+    @staticmethod
+    def create_label(this) -> object:
+        return this.train['cheese_category'] # Label is the answer.
 
-        # print(this.user_origin)
-        # print(this.cheese)
-
-        category_count = self.category_Count(this.user_origin)
-        item_count = self.item_Count(this.user_origin, category_count)
-        this.user = self.change_to_cheese(this.cheese, item_count)
-        this.user = self.user_gender_norminal(this.user)
-
-        user_split = self.user_data_split(this.user)
-        # print(f'Preprocessing User Dataset : {this.user}')
-
-        # print(min(this.user['user_age'])) # 고객 최소 나이 : 10
-        # print(max(this.user['user_age'])) # 고객 최대 나이 : 80
-        
-        show_age_plot = self.find_requency(this.user, 'user_index', 'user_age') 
-        # 30대(1만5천) > 40대(1만4천) > 20대(3천5백) > 50대(3천1백) > 60대(523) > 10대=70대(80) >80대
-        # print(show_age_plot)
-
-        # show_wordcloud = self.make_wordcloud(this.user)
-        # print(show_wordcloud)
-
+    @staticmethod
+    def drop_feature(this, feature) -> object:
+        this.train = this.train.drop([feature], axis = 1)
+        this.test = this.test.drop([feature], axis = 1)
         return this
 
 
-    def new(self):
-        # train, test 데이터#
-        train = 'user_train.csv'
-        test = 'user_test.csv'
-        this = self.fileReader
-        this.train = self.new_model(train) # payload
-        this.test = self.new_model(test) # payload
 
-        '''
-        Original Model Generation
-        '''
+    ####################### 원본 데이터를 치즈 구매 데이터 변환 #######################
 
-        self.odf = pd.DataFrame(
-            {
-                'user_id': this.train.user_id,
-                'password': '1'
-            }
-        )
-        
-        # print(test_find_null)
-        
-        this.id = this.test['user_id'] # This becomes a question.
-        
-        # print(f'Preprocessing Train Variable : {this.train.columns}')
-        # print(f'Preprocession Test Variable : {this.test.columns}')
-        
-
-        this = UserDf.cheese_rank_oridinal(this)
-        this = UserDf.user_gender_norminal(this)
-        print(f'######## age 전처리 체크 ##########')
-        this = UserDf.user_age_norminal(this)
-        this = UserDf.cheese_code_ordinal(this)
-        this = UserDf.buy_count_numeric(this)
-        this = UserDf.cheese_category_nominal(this)
-        this = UserDf.cheese_texture_nominal(this)
-
-        # show_corr = UserDf.make_corr(this.train)
-        # print(show_corr)
-
-        this = self.drop_feature(this, 'user_index')
-        this = self.drop_feature(this, 'cheese_brand')
-        this = self.drop_feature(this, 'cheese_code')
-        this = self.drop_feature(this, 'cheese_name')
-        this = self.drop_feature(this, 'cheese_types')
-
-        this = self.drop_feature(this, 'cheese_rank')
-
-        this.label = self.create_label(this) # payload
-        this.train = self.create_train(this) # payload    
-
-        print(f'######## train na 체크 ##########')
-        print(f'{this.train.isnull().sum()}')
-        print(f'######## test na 체크 ##########')
-        print(f'{this.train.isnull().sum()}')
-
-        print(f'######## data type 체크 ##########')
-        print(this.train.dtypes)
-        # print(this)
-
-        # learning = self.learning(this.train, this.test)
-        # print(learning)
-
-        # submit = self.submit(this.train, this.test)
-        # print(submit)
-
-
-        df = pd.DataFrame(
-            {
-                'gender': this.train.user_gender,
-                'age_group': this.train.age_group,
-                'cheese_texture': this.train.cheese_texture_code,
-                'buy_count': this.train.buy_count
-            }
-        )
-
-        sumdf = pd.concat([self.odf, df], axis = 1)
-        print(sumdf)
-        sumdf.to_csv(os.path.join('com_cheese_api/resources/data', 'users_data.csv'), index=False, encoding='utf-8-sig')
-        return sumdf
-
-
-
-
-    
-    #------------------------------------------ 데이터셋 1차 정제 ------------------------------------------#
-
-    @staticmethod
-    def make_barplot(x_name, y_name, data_name):
-        # font_path = 'C:\\Windows\\Fonts\\NanumGothic.ttf'
-        # font_name1 = fm.FontProperties(fname = font_path).get_name()
-        # plt.rc('font', family = font_name1)
-        plt.xticks(rotation = 45)
-        sns.barplot(x = x_name, y = y_name, data = data_name)
-        plt.show()
-
+    # 밑에 make_barplot()을 이용해서 시각화 가능.
     @staticmethod
     def find_requency(data, column1, column2):
         count_size = data[column1].groupby(data[column2]).count().reset_index(name='counts')
@@ -232,77 +201,46 @@ class UserDf:
     def change_to_cheese(data, item_count):
         cheese_df = data.rename(columns={'ranking': 'sub2_rank'})
         user_cheese_merge = pd.merge(item_count, cheese_df, on = 'sub2_rank', how = 'left')
-        user_data1 = user_cheese_merge.drop(['item_code', 'item_name', 'item_add_name', 'category_x', 'sub1_category', 'sub2_category', 'item_brand', 'sub1_counts', 'sub1_rank', 'sub2_counts', 'buy_price'], axis=1)
+        user_data1 = user_cheese_merge.drop(['Unnamed: 0_x', 'item_code', 'item_name', 'item_add_name', 'category_x', 'sub1_category', 'sub2_category', 'item_brand', 'sub1_counts', 'sub1_rank', 'sub2_counts', 'buy_price'], axis=1)
         user_data2 = user_data1.drop(['country', 'matching', 'matching.1', 'content', 'img'], axis=1)
-        user_data_fin = user_data2.rename(columns={'Unnamed: 0_x': 'user_index', 'Unnamed: 0_y': 'cheese_code', 'brand': 'cheese_brand', 'name': 'cheese_name', 'price' : 'cheese_one_price', 'sub2_rank': 'cheese_rank', \
+        user_data_fin = user_data2.rename(columns={'Unnamed: 0_y': 'cheese_code', 'brand': 'cheese_brand', 'name': 'cheese_name', 'price' : 'cheese_one_price', 'sub2_rank': 'cheese_rank', \
                                                         'category_y': 'cheese_category', 'texture': 'cheese_texture', 'types': 'cheese_types'})
         # print(list(users_cheese_merge))
         # print(user_data_fin)
-        user_data_fin.to_csv(os.path.join('com_cheese_api/resources/data', 'user_df.csv'), index=False, encoding='utf-8-sig')
+        # user_data_fin.to_csv(os.path.join('com_cheese_api/resources/data', 'user_df.csv'), index=True, encoding='utf-8-sig')
         return user_data_fin
     # item_Change()
 
-
-    @staticmethod
-    def user_data_split (data):
-        user_train, user_test = train_test_split(data, test_size=0.3, random_state = 32)
-        user_train.to_csv(os.path.join('com_cheese_api/resources/data', 'user_train.csv'), index=False)
-        user_test.to_csv(os.path.join('com_cheese_api/resources/data', 'user_test.csv'), index=False)
-        return user_train, user_test
+#     @staticmethod
+#     def change_feature_name(data, origin_name, new_name):
+#             data.rename(column={'origin_name': 'new_name'})
+#         return data
 
 
-# if __name__ == '__main__':
-#     userDf = UserDf()
-#     userDf.user_hook()
 
-    #-------------------------------------------데이터 2차 정제-------------------------------------------#
+
+    ####################### 데이터 정제 #######################
     
-    @staticmethod
-    def create_train(this) -> object:
-        return this.train.drop('cheese_category', axis=1) # Train is a dataset in which the answer is removed. 
-
-    @staticmethod
-    def create_label(this) -> object:
-        return this.train['cheese_category'] # Label is the answer.
-
-    @staticmethod
-    def drop_feature(this, feature) -> object:
-        this.train = this.train.drop([feature], axis = 1)
-        this.test = this.test.drop([feature], axis = 1)
-        return this
-
-
-    ###### 데이터 drop, ordinal, nomianl #####
-
     @staticmethod
     def cheese_rank_oridinal(this) -> object:
         return this
 
     @staticmethod
-    # def user_gender_norminal(this, data) -> object:
-    #     combine = [this.train, this.test] # Train and test are bound.
-    #     gender_mapping = {'M': 0, 'F': 1}
-    #     for dataset in combine:
-    #         dataset['user_gender'] = dataset['user_gender'].map(gender_mapping)
-    #     this.train = this.train # overriding
-    #     this.test = this.test
-    #     return this
 
-    def user_gender_norminal(this, data) -> object:
+    def user_gender_norminal(this) -> object:
         gender_mapping = {'M': 0, 'F': 1}
-        data['user_gender'] = data['user_gender'].map(gender_mapping)
-        data.to_csv(os.path.join('com_cheese_api/resources/data', 'check11.csv'), index=False, encoding='utf-8-sig')
-        return data
+        this.user['gender'] = this.user['user_gender'].map(gender_mapping)
+        this.user = this.user # overriding
+        # this.user.to_csv(os.path.join('com_cheese_api/resources/data', 'check11.csv'), index=False, encoding='utf-8-sig')
+        return this
 
 
     @staticmethod
     def user_age_norminal(this) -> object:
-        train = this.train
-        test = this.test
+        user = this.user
         bins = [1, 29, 39, 49, 59, np.inf]
         labels = ['Youth', 'Adult30', 'Adult40', 'Adult50', 'Senior']
-        train['age_group'] = pd.cut(train['user_age'], bins, right = True, labels = labels)
-        test['age_group'] = pd.cut(test['user_age'], bins, right = True, labels = labels)
+        user['age_group'] = pd.cut(user['user_age'], bins, right = True, labels = labels)
         age_mapping = {
                 'Youth': 1,
                 'Adult30': 2 ,
@@ -310,12 +248,10 @@ class UserDf:
                 'Adult50': 4,
                 'Senior': 5
         }
-        train['age_group'] = train['age_group'].map(age_mapping)
-        test['age_group'] = test['age_group'].map(age_mapping)
-        this.train = this.train # overriding
-        this.test = this.test
-        print(this.train)
-        this.train.to_csv(os.path.join('com_cheese_api/resources/data', 'train_check.csv'), index=False, encoding='utf-8-sig')
+        user['age_group'] = user['age_group'].map(age_mapping)
+        this.user = this.user # overriding
+        print(this.user)
+        # this.user.to_csv(os.path.join('com_cheese_api/resources/data', 'user_check.csv'), index=False, encoding='utf-8-sig')
         return this
 
     @staticmethod
@@ -336,21 +272,7 @@ class UserDf:
 
     @staticmethod
     def cheese_category_nominal(this) -> object:
-        this.train['cheese_category_code'] = this.train['cheese_category'].map({
-            '모짜렐라': 1,
-            '블루치즈': 2,
-            '리코타': 3,
-            '체다': 4,
-            '파르미지아노 레지아노': 5,
-            '고다': 6,
-            '까망베르': 7,
-            '브리': 8,
-            '만체고': 9,
-            '에멘탈': 10,
-            '부라타': 11
-        })
-
-        this.test['cheese_category_code'] = this.test['cheese_category'].map({
+        this.user['cheese_category_code'] = this.user['cheese_category'].map({
             '모짜렐라': 1,
             '블루치즈': 2,
             '리코타': 3,
@@ -367,7 +289,7 @@ class UserDf:
 
     @staticmethod
     def cheese_texture_nominal(this) -> object:
-        this.train['cheese_texture_code'] = this.train['cheese_texture'].map({
+        this.user['cheese_texture_code'] = this.user['cheese_texture'].map({
             '후레쉬치즈': 1,
             '세미하드치즈': 2,
             '세미하드': 2,
@@ -377,15 +299,6 @@ class UserDf:
             '경성치즈': 6
         })
 
-        this.test['cheese_texture_code'] = this.test['cheese_texture'].map({
-            '후레쉬치즈': 1,
-            '세미하드치즈': 2,
-            '세미하드': 2,
-            '하드치즈': 3,
-            '소프트치즈': 4,
-            '연성치즈': 5,
-            '경성치즈': 6
-        })
         return this
 
 
@@ -393,7 +306,31 @@ class UserDf:
     # def cheese_one_price_numeric(this) -> object:
 
 
-    #------------------------------------------ 데이터 탐색 & 시각화 ------------------------------------------#
+    ####################### train, test 데이터 셋 나누기 #######################
+
+    @staticmethod
+    def user_data_split (data):
+        user_train, user_test = train_test_split(data, test_size=0.3, random_state = 32)
+        user_train.to_csv(os.path.join('com_cheese_api/resources/data', 'user_train.csv'), index=False)
+        user_test.to_csv(os.path.join('com_cheese_api/resources/data', 'user_test.csv'), index=False)
+        return user_train, user_test
+
+
+
+    ####################### 데이터 탐색 & 시각화 #######################
+
+    # find_requency()에서 시각화로 사용.
+    @staticmethod
+    def make_barplot(x_name, y_name, data_name):
+        # font_path = 'C:\\Windows\\Fonts\\NanumGothic.ttf'
+        # font_name1 = fm.FontProperties(fname = font_path).get_name()
+        # plt.rc('font', family = font_name1)
+        plt.xticks(rotation = 45)
+        sns.barplot(x = x_name, y = y_name, data = data_name)
+        plt.show()
+
+
+
     @staticmethod
     def make_wordcloud(data):
         user_df = data.loc[:,['cheese_name']]
@@ -455,100 +392,28 @@ class UserDf:
         sns.clustermap(make_corr, annot = True, cmap = 'RdYlBu_r', linewidths=.5, cbar_kws={"shrink": .5}, vmin = -1, vmax = 1)
         plt.show()
 
-
-    # Dtree, rforest, nb, nnn, svm among Learning Algorithms use this as a representative
-
-    @staticmethod
-    def create_k_fold():
-        return KFold(n_splits = 10, shuffle = True, random_state = 0)
-
-    def accuracy_by_dtree(self, this):
-        dtree = DecisionTreeClassifier()
-        score = cross_val_score(dtree, this.train, this.label, cv = UserDf.create_k_fold(), \
-                n_jobs = 1, scoring = 'accuracy')
-        return round(np.mean(score) * 100, 2)
-
-    def accuracy_by_rforest(self, this):
-        rforest = RandomForestClassifier()
-        score = cross_val_score(rforest, this.train, this.label, cv=UserDf.create_k_fold(), \
-                n_jobs = 1, scoring = 'accuracy')
-        return round(np.mean(score) * 100, 2)
-
-    def accuracy_by_knn(self, this):
-        knn = KNeighborsClassifier()
-        score = cross_val_score(knn, this.train , this.label, cv = UserDf.create_k_fold(), \
-                n_jobs = 1, scoring = 'accuracy')
-        return round(np,mean(score) * 100, 2)
-
-    def accuracy_by_svm(self, this):
-        svm = SVC()
-        score = cross_val_score(svm, this.train, this.label, cv = UserDf.create_k_fold(), \
-                n_jobs = 1, scoring = 'accuracy')
-        return round(np.mean(score) * 100, 2)
-
-
-    # def modeling(self, train, test):
-    #     this = self.new(train, test)
-    #     this.label = self.create_label(this)
-    #     this.train = self.create_train(this)
-    #     print(f'>> Train 변수 : {this.train.columns}')
-    #     print(f'>> Test 변수 : {this.train.columns}')
-    #     return this
-
-    # def learning(self, train, test):
-    #     service = self.service
-    #     this = self.modeling(train,test)
-    #     print(f'Dtree verification result: {service.accuracy_by_dtree(this)}')
-    #     print(f'RForest verification result: {service.accuracy_by_rforest(this)}')
-    #     print(f'Naive Bayes tree verification result: {service.accuracy_by_nb(this)}')
-    #     print(f'KNN verification result: {service.accuracy_by_knn(this)}')
-    #     print(f'SVM verification result: {service.accuracy_by_svm(this)}')
-
-    # def submit(self, train, test):
-    #     this = self.modeling(train, test)
-    #     clf = RandomForestClassifier()
-    #     clf.fit(this.train, this.label)
-    #     prediction = clf.prdict(this.test)
-
-    #     print(this)
-
-    #     df = pd.DataFrame(
-    #         {
-    #             'gender': this.train.user_gender,
-    #             'age_group': this.train.age_group,
-    #             'cheese_texture': this.train.cheese_texture_code,
-    #             'buy_count': this.train.buy_count
-    #         }
-    #     )
-
-    #     sumdf = pd.concat([self.odf, df], axis = 1)
-    #     print(sumdf)
-    #     return sumdf
-
-
-
-
-
 '''
-        user_id password  gender  age_group  cheese_texture  buy_count
-0      1751881        1       1        1.0               1          2
-1      1835210        1       1        1.0               1          2
-2      5824726        1       1        3.0               1          1
-3      1752218        1       0        2.0               1          3
-4      2034072        1       1        2.0               1          1
+       user_id password  gender  age_group  cheese_texture  buy_count
+0      1751881        1       1          2               1          2
+1      1835210        1       1          2               1          2
+2      5824726        1       1          4               1          1
+3      1752218        1       0          3               1          3
+4      2034072        1       1          3               1          1
 ...        ...      ...     ...        ...             ...        ...
-25806  1718175        1       1        NaN               1          1
-25807  2155344        1       1        2.0               4          1
-25808  5939075        1       1        1.0               2          3
-25809  4959284        1       1        1.0               1          1
-25810  1747758        1       1        3.0               2          1
+25806  1718175        1       1          1               1          1
+25807  2155344        1       1          3               4          1
+25808  5939075        1       1          2               2          3
+25809  4959284        1       1          2               1          1
+25810  1747758        1       1          4               2          1
 
 [25811 rows x 6 columns]
 '''
 
+
 if __name__ == '__main__':
     userDf = UserDf()
-    userDf.user_hook()
+    userDf.new()
+
 
 
 # 2. 모델링 (Dto)
@@ -583,13 +448,13 @@ class UserDto(db.Model):
 
     def __repr__(self):
         return f'User(user_id={self.user_id}, password={self.password}, \
-                    name={self.name}, gender = {self.gender}, age_group={self.age_group}, \
-                    cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
+                gender = {self.gender}, age_group={self.age_group}, \
+                cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
 
     def __str__(self):
         return f'User(user_id={self.user_id}, password={self.password}, \
-                    name={self.name}, gender = {self.gender}, age_group={self.age_group}, \
-                    cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
+                gender = {self.gender}, age_group={self.age_group}, \
+                cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
 
     def json(self):
         return {
@@ -612,30 +477,32 @@ class UserVo():
 
 
 # 텐서플로우가 걸리는 곳
-class UserTf():
-    ...
+# class UserTf():
+#     ...
 
 # 인공지능 판단해주는 곳
-class UserAi():
-    ...
+# class UserAi():
+#     ...
 
 # db.init_app(app)
 # with app.app_context():
 #     db.create_all()
 
-
+Session = openSession()
+session = Session()
+user_df = UserDf()
     
 
-class UserDao(UserDto):
+# class UserDao(UserDto):
 
-    @staticmethod   
-    def bulk():
-        userDf = UserDf()
-        df = userDf.new()
-        print(df.head())
-        session.bulk_insert_mappings(UserDto, df.to_dict(orient="records"))
-        session.commit()
-        session.close()
+#     @staticmethod   
+#     def bulk():
+#         userDf = UserDf()
+#         df = userDf.new()
+#         print(df.head())
+#         session.bulk_insert_mappings(UserDto, df.to_dict(orient="records"))
+#         session.commit()
+#         session.close()
 
 # if __name__ == '__main__':
 #     UserDao.bulk()
