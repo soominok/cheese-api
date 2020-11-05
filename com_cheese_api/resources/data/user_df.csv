@@ -1,4 +1,4 @@
-user_index,user_id,user_gender,user_age,buy_count,cheese_rank,cheese_code,cheese_brand,cheese_name,cheese_texture,cheese_types,cheese_category,cheese_one_price
+﻿user_index,user_id,user_gender,user_age,buy_count,cheese_rank,cheese_code,cheese_brand,cheese_name,cheese_texture,cheese_types,cheese_category,cheese_one_price
 0,2391853,M,40,1,8.0,8,프란시아,리코타 치즈,후레쉬치즈,자연치즈,리코타,"4,600원"
 1,1799897,F,40,1,8.0,8,프란시아,리코타 치즈,후레쉬치즈,자연치즈,리코타,"4,600원"
 2,1614947,F,50,1,10.0,10,푸글리제,모짜렐라,후레쉬치즈,자연치즈,모짜렐라,"5,500원"

@@ -85,6 +85,8 @@ class UserDf:
         category_count = self.category_Count(this.user_origin)
         item_count = self.item_Count(this.user_origin, category_count)
         this.user = self.change_to_cheese(this.cheese, item_count)
+        this.user = self.user_gender_norminal(this.user)
+
         user_split = self.user_data_split(this.user)
         # print(f'Preprocessing User Dataset : {this.user}')
 
@@ -93,10 +95,10 @@ class UserDf:
         
         show_age_plot = self.find_requency(this.user, 'user_index', 'user_age') 
         # 30대(1만5천) > 40대(1만4천) > 20대(3천5백) > 50대(3천1백) > 60대(523) > 10대=70대(80) >80대
-        print(show_age_plot)
+        # print(show_age_plot)
 
-        show_wordcloud = self.make_wordcloud(this.user)
-        print(show_wordcloud)
+        # show_wordcloud = self.make_wordcloud(this.user)
+        # print(show_wordcloud)
 
         return this
 
@@ -130,14 +132,15 @@ class UserDf:
 
         this = UserDf.cheese_rank_oridinal(this)
         this = UserDf.user_gender_norminal(this)
+        print(f'######## age 전처리 체크 ##########')
         this = UserDf.user_age_norminal(this)
         this = UserDf.cheese_code_ordinal(this)
         this = UserDf.buy_count_numeric(this)
         this = UserDf.cheese_category_nominal(this)
         this = UserDf.cheese_texture_nominal(this)
 
-        show_corr = UserDf.make_corr(this.train)
-        print(show_corr)
+        # show_corr = UserDf.make_corr(this.train)
+        # print(show_corr)
 
         this = self.drop_feature(this, 'user_index')
         this = self.drop_feature(this, 'cheese_brand')
@@ -149,9 +152,6 @@ class UserDf:
 
         this.label = self.create_label(this) # payload
         this.train = self.create_train(this) # payload    
-
-        this.train.to_csv(os.path.join('com_cheese_api/resources/data', 'train22.csv'), index=False)
-       
 
         print(f'######## train na 체크 ##########')
         print(f'{this.train.isnull().sum()}')
@@ -180,7 +180,7 @@ class UserDf:
 
         sumdf = pd.concat([self.odf, df], axis = 1)
         print(sumdf)
-        
+        sumdf.to_csv(os.path.join('com_cheese_api/resources/data', 'users_data.csv'), index=False, encoding='utf-8-sig')
         return sumdf
 
 
@@ -202,7 +202,7 @@ class UserDf:
     def find_requency(data, column1, column2):
         count_size = data[column1].groupby(data[column2]).count().reset_index(name='counts')
         count_size['rank'] = count_size['counts'].rank(ascending=False)
-        barplot = UserDf.make_barplot(column2, 'counts', count_size)
+        show_barplot = UserDf.make_barplot(column2, 'counts', count_size)
         return count_size
 
     @staticmethod
@@ -238,7 +238,7 @@ class UserDf:
                                                         'category_y': 'cheese_category', 'texture': 'cheese_texture', 'types': 'cheese_types'})
         # print(list(users_cheese_merge))
         # print(user_data_fin)
-        user_data_fin.to_csv(os.path.join('com_cheese_api/resources/data', 'user_data.csv'), index=False)
+        user_data_fin.to_csv(os.path.join('com_cheese_api/resources/data', 'user_df.csv'), index=False, encoding='utf-8-sig')
         return user_data_fin
     # item_Change()
 
@@ -251,6 +251,9 @@ class UserDf:
         return user_train, user_test
 
 
+# if __name__ == '__main__':
+#     userDf = UserDf()
+#     userDf.user_hook()
 
     #-------------------------------------------데이터 2차 정제-------------------------------------------#
     
@@ -276,50 +279,43 @@ class UserDf:
         return this
 
     @staticmethod
-    def user_gender_norminal(this) -> object:
-        combine = [this.train, this.test] # Train and test are bound.
+    # def user_gender_norminal(this, data) -> object:
+    #     combine = [this.train, this.test] # Train and test are bound.
+    #     gender_mapping = {'M': 0, 'F': 1}
+    #     for dataset in combine:
+    #         dataset['user_gender'] = dataset['user_gender'].map(gender_mapping)
+    #     this.train = this.train # overriding
+    #     this.test = this.test
+    #     return this
+
+    def user_gender_norminal(this, data) -> object:
         gender_mapping = {'M': 0, 'F': 1}
-        for dataset in combine:
-            dataset['user_gender'] = dataset['user_gender'].map(gender_mapping)
-        this.train = this.train # overriding
-        this.test = this.test
-        return this
+        data['user_gender'] = data['user_gender'].map(gender_mapping)
+        data.to_csv(os.path.join('com_cheese_api/resources/data', 'check11.csv'), index=False, encoding='utf-8-sig')
+        return data
 
 
     @staticmethod
     def user_age_norminal(this) -> object:
         train = this.train
         test = this.test
-
-        bins = [20, 30, 40, 50, 60]
-        labels = ['Youth', 'Adult30', 'Adult40', 'Adult50' 'Senior']
-        train['age_group'] = pd.cut(train['user_age'], bins, labels = labels)
-        test['age_group'] = pd.cut(test['user_age'], bins, labels = labels)
-        age_title_mapping = {
-            1: 'Youth',
-            2: 'Adult30',
-            3: 'Adult40',
-            4: 'Adult50',
-            5: 'Senior'
-        }
-        # for x in range(len(train['age_group'])):
-        #     if train['age_group'][x] == 'Unkown':
-        #         train['age_group'][x] = age_title_mapping[train['Title'][x]]
-        # for x in range(len(test['age_group'])):
-        #     if test['age_group'][x] == 'Unkown':
-        #         test['age_group'][x] = age_title_mapping[test['Title'][x]]
-
+        bins = [1, 29, 39, 49, 59, np.inf]
+        labels = ['Youth', 'Adult30', 'Adult40', 'Adult50', 'Senior']
+        train['age_group'] = pd.cut(train['user_age'], bins, right = True, labels = labels)
+        test['age_group'] = pd.cut(test['user_age'], bins, right = True, labels = labels)
         age_mapping = {
-            'Youth': 1,
-            'Adult30': 2 ,
-            'Adult40': 3 ,
-            'Adult50': 4,
-            'Senior': 5
+                'Youth': 1,
+                'Adult30': 2 ,
+                'Adult40': 3 ,
+                'Adult50': 4,
+                'Senior': 5
         }
         train['age_group'] = train['age_group'].map(age_mapping)
         test['age_group'] = test['age_group'].map(age_mapping)
-        this.train = this.train
+        this.train = this.train # overriding
         this.test = this.test
+        print(this.train)
+        this.train.to_csv(os.path.join('com_cheese_api/resources/data', 'train_check.csv'), index=False, encoding='utf-8-sig')
         return this
 
     @staticmethod
@@ -491,43 +487,43 @@ class UserDf:
         return round(np.mean(score) * 100, 2)
 
 
-    def modeling(self, train, test):
-        this = self.new(train, test)
-        this.label = self.create_label(this)
-        this.train = self.create_train(this)
-        print(f'>> Train 변수 : {this.train.columns}')
-        print(f'>> Test 변수 : {this.train.columns}')
-        return this
+    # def modeling(self, train, test):
+    #     this = self.new(train, test)
+    #     this.label = self.create_label(this)
+    #     this.train = self.create_train(this)
+    #     print(f'>> Train 변수 : {this.train.columns}')
+    #     print(f'>> Test 변수 : {this.train.columns}')
+    #     return this
 
-    def learning(self, train, test):
-        service = self.service
-        this = self.modeling(train,test)
-        print(f'Dtree verification result: {service.accuracy_by_dtree(this)}')
-        print(f'RForest verification result: {service.accuracy_by_rforest(this)}')
-        print(f'Naive Bayes tree verification result: {service.accuracy_by_nb(this)}')
-        print(f'KNN verification result: {service.accuracy_by_knn(this)}')
-        print(f'SVM verification result: {service.accuracy_by_svm(this)}')
+    # def learning(self, train, test):
+    #     service = self.service
+    #     this = self.modeling(train,test)
+    #     print(f'Dtree verification result: {service.accuracy_by_dtree(this)}')
+    #     print(f'RForest verification result: {service.accuracy_by_rforest(this)}')
+    #     print(f'Naive Bayes tree verification result: {service.accuracy_by_nb(this)}')
+    #     print(f'KNN verification result: {service.accuracy_by_knn(this)}')
+    #     print(f'SVM verification result: {service.accuracy_by_svm(this)}')
 
-    def submit(self, train, test):
-        this = self.modeling(train, test)
-        clf = RandomForestClassifier()
-        clf.fit(this.train, this.label)
-        prediction = clf.prdict(this.test)
+    # def submit(self, train, test):
+    #     this = self.modeling(train, test)
+    #     clf = RandomForestClassifier()
+    #     clf.fit(this.train, this.label)
+    #     prediction = clf.prdict(this.test)
 
-        print(this)
+    #     print(this)
 
-        df = pd.DataFrame(
-            {
-                'gender': this.train.user_gender,
-                'age_group': this.train.age_group,
-                'cheese_texture': this.train.cheese_texture_code,
-                'buy_count': this.train.buy_count
-            }
-        )
+    #     df = pd.DataFrame(
+    #         {
+    #             'gender': this.train.user_gender,
+    #             'age_group': this.train.age_group,
+    #             'cheese_texture': this.train.cheese_texture_code,
+    #             'buy_count': this.train.buy_count
+    #         }
+    #     )
 
-        sumdf = pd.concat([self.odf, df], axis = 1)
-        print(sumdf)
-        return sumdf
+    #     sumdf = pd.concat([self.odf, df], axis = 1)
+    #     print(sumdf)
+    #     return sumdf
 
 
 
@@ -550,9 +546,9 @@ class UserDf:
 [25811 rows x 6 columns]
 '''
 
-# if __name__ == '__main__':
-#     userDf = UserDf()
-#     userDf.new()
+if __name__ == '__main__':
+    userDf = UserDf()
+    userDf.user_hook()
 
 
 # 2. 모델링 (Dto)
@@ -641,5 +637,5 @@ class UserDao(UserDto):
         session.commit()
         session.close()
 
-if __name__ == '__main__':
-    UserDao.bulk()
+# if __name__ == '__main__':
+#     UserDao.bulk()
