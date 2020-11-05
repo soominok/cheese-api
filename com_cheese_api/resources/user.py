@@ -26,7 +26,6 @@ import json
 
 
 class UserDf:
-
     def __init__(self):
         self.fileReader = FileReader()
         self.data = os.path.join(os.path.abspath(os.path.dirname(__file__))+'/data')
@@ -89,6 +88,7 @@ class UserDf:
         
         self.odf = pd.DataFrame(
             {
+                'user_index': this.train.user_index,
                 'user_id': this.train.user_id,
                 'password': '1'
             }
@@ -410,9 +410,9 @@ class UserDf:
 '''
 
 
-if __name__ == '__main__':
-    userDf = UserDf()
-    userDf.new()
+# if __name__ == '__main__':
+#     userDf = UserDf()
+#     userDf.new()
 
 
 
@@ -427,7 +427,8 @@ class UserDto(db.Model):
     __tablename__ = 'users'
     __table_args__ = {'mysql_collate':'utf8_general_ci'}
 
-    user_id: str = db.Column(db.String(20), primary_key= True, index = True)
+    user_index: int = db.Column(db.Integer, primary_key= True, index = True)
+    user_id: str = db.Column(db.String(20))
     password: str = db.Column(db.String(1))
     gender: int = db.Column(db.Integer)
     age_group: int = db.Column(db.Integer)
@@ -438,7 +439,8 @@ class UserDto(db.Model):
     # prices = db.relationship('PriceDto', back_populates='user', lazy='dynamic')
     # articles = db.relationship('ArticleDto', back_populates='user', lazy='dynamic')
 
-    def __init__(self, user_id, password, gender, age_group, cheese_texture, buy_count):
+    def __init__(self, user_index, user_id, password, gender, age_group, cheese_texture, buy_count):
+        self.user_index = user_index
         self.user_id = user_id
         self.password = password
         self.gender = gender
@@ -447,17 +449,18 @@ class UserDto(db.Model):
         self.buy_count = buy_count
 
     def __repr__(self):
-        return f'User(user_id={self.user_id}, password={self.password}, \
-                gender = {self.gender}, age_group={self.age_group}, \
-                cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
+        return f'User(user_index={self.user_index}, user_id={self.user_id}, password={self.password}, \
+                    gender = {self.gender}, age_group={self.age_group}, \
+                    cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
 
     def __str__(self):
-        return f'User(user_id={self.user_id}, password={self.password}, \
-                gender = {self.gender}, age_group={self.age_group}, \
-                cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
+        return f'User(user_index={self.user_index}, user_id={self.user_id}, password={self.password}, \
+                    gender = {self.gender}, age_group={self.age_group}, \
+                    cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
 
     def json(self):
         return {
+            'user_index' : self.user_index,
             'userId' : self.user_id,
             'password': self.password,
             'gender': self.gender,
@@ -468,13 +471,13 @@ class UserDto(db.Model):
 
 # Json 형태로 쓰기 위해 씀!
 class UserVo():
+    user_index: int = 0
     user_id: str = ''
     password: str = ''
     gender: int = 0
     age_group: int = 0
     cheese_texture: int = 0
     buy_count: int = 0
-
 
 # 텐서플로우가 걸리는 곳
 # class UserTf():
@@ -484,25 +487,20 @@ class UserVo():
 # class UserAi():
 #     ...
 
-# db.init_app(app)
-# with app.app_context():
-#     db.create_all()
 
 Session = openSession()
 session = Session()
-user_df = UserDf()
     
 
-# class UserDao(UserDto):
+class UserDao(UserDto):
+    @staticmethod   
+    def bulk():
+        userDf = UserDf()
+        df = userDf.new()
+        print(df.head())
+        session.bulk_insert_mappings(UserDto, df.to_dict(orient="records"))
+        session.commit()
+        session.close()
 
-#     @staticmethod   
-#     def bulk():
-#         userDf = UserDf()
-#         df = userDf.new()
-#         print(df.head())
-#         session.bulk_insert_mappings(UserDto, df.to_dict(orient="records"))
-#         session.commit()
-#         session.close()
-
-# if __name__ == '__main__':
-#     UserDao.bulk()
+if __name__ == '__main__':
+    UserDao.bulk()

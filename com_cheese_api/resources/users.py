@@ -85,7 +85,6 @@ class UserDf:
         category_count = self.category_Count(this.user_origin)
         item_count = self.item_Count(this.user_origin, category_count)
         this.user = self.change_to_cheese(this.cheese, item_count)
-        this.user = self.user_gender_norminal(this.user)
 
         user_split = self.user_data_split(this.user)
         # print(f'Preprocessing User Dataset : {this.user}')
@@ -117,6 +116,7 @@ class UserDf:
 
         self.odf = pd.DataFrame(
             {
+                'user_index': this.train.user_index,
                 'user_id': this.train.user_id,
                 'password': '1'
             }
@@ -142,7 +142,7 @@ class UserDf:
         # show_corr = UserDf.make_corr(this.train)
         # print(show_corr)
 
-        this = self.drop_feature(this, 'user_index')
+        # this = self.drop_feature(this, 'user_index')
         this = self.drop_feature(this, 'cheese_brand')
         this = self.drop_feature(this, 'cheese_code')
         this = self.drop_feature(this, 'cheese_name')
@@ -279,20 +279,14 @@ class UserDf:
         return this
 
     @staticmethod
-    # def user_gender_norminal(this, data) -> object:
-    #     combine = [this.train, this.test] # Train and test are bound.
-    #     gender_mapping = {'M': 0, 'F': 1}
-    #     for dataset in combine:
-    #         dataset['user_gender'] = dataset['user_gender'].map(gender_mapping)
-    #     this.train = this.train # overriding
-    #     this.test = this.test
-    #     return this
-
-    def user_gender_norminal(this, data) -> object:
+    def user_gender_norminal(this) -> object:
+        combine = [this.train, this.test] # Train and test are bound.
         gender_mapping = {'M': 0, 'F': 1}
-        data['user_gender'] = data['user_gender'].map(gender_mapping)
-        data.to_csv(os.path.join('com_cheese_api/resources/data', 'check11.csv'), index=False, encoding='utf-8-sig')
-        return data
+        for dataset in combine:
+            dataset['user_gender'] = dataset['user_gender'].map(gender_mapping)
+        this.train = this.train # overriding
+        this.test = this.test
+        return this
 
 
     @staticmethod
@@ -388,6 +382,14 @@ class UserDf:
         })
         return this
 
+    @staticmethod
+    def user_no(data, column1):
+        data_lists = range(len(data[column1]))
+        for langes in data_lists:
+            data['user_no'] += 1
+        return data
+
+
 
     # @staticmethod
     # def cheese_one_price_numeric(this) -> object:
@@ -478,7 +480,7 @@ class UserDf:
         knn = KNeighborsClassifier()
         score = cross_val_score(knn, this.train , this.label, cv = UserDf.create_k_fold(), \
                 n_jobs = 1, scoring = 'accuracy')
-        return round(np,mean(score) * 100, 2)
+        return round(np.mean(score) * 100, 2)
 
     def accuracy_by_svm(self, this):
         svm = SVC()
@@ -546,9 +548,9 @@ class UserDf:
 [25811 rows x 6 columns]
 '''
 
-if __name__ == '__main__':
-    userDf = UserDf()
-    userDf.user_hook()
+# if __name__ == '__main__':
+#     userDf = UserDf()
+#     userDf.new()
 
 
 # 2. 모델링 (Dto)
@@ -562,7 +564,8 @@ class UserDto(db.Model):
     __tablename__ = 'users'
     __table_args__ = {'mysql_collate':'utf8_general_ci'}
 
-    user_id: str = db.Column(db.String(20), primary_key= True, index = True)
+    user_index: int = db.Column(db.Integer, primary_key= True, index = True)
+    user_id: str = db.Column(db.String(20))
     password: str = db.Column(db.String(1))
     gender: int = db.Column(db.Integer)
     age_group: int = db.Column(db.Integer)
@@ -573,7 +576,8 @@ class UserDto(db.Model):
     # prices = db.relationship('PriceDto', back_populates='user', lazy='dynamic')
     # articles = db.relationship('ArticleDto', back_populates='user', lazy='dynamic')
 
-    def __init__(self, user_id, password, gender, age_group, cheese_texture, buy_count):
+    def __init__(self, user_index, user_id, password, gender, age_group, cheese_texture, buy_count):
+        self.user_index = user_index
         self.user_id = user_id
         self.password = password
         self.gender = gender
@@ -582,17 +586,18 @@ class UserDto(db.Model):
         self.buy_count = buy_count
 
     def __repr__(self):
-        return f'User(user_id={self.user_id}, password={self.password}, \
-                    name={self.name}, gender = {self.gender}, age_group={self.age_group}, \
+        return f'User(user_index={self.user_index}, user_id={self.user_id}, password={self.password}, \
+                    gender = {self.gender}, age_group={self.age_group}, \
                     cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
 
     def __str__(self):
-        return f'User(user_id={self.user_id}, password={self.password}, \
-                    name={self.name}, gender = {self.gender}, age_group={self.age_group}, \
+        return f'User(user_index={self.user_index}, user_id={self.user_id}, password={self.password}, \
+                    gender = {self.gender}, age_group={self.age_group}, \
                     cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
 
     def json(self):
         return {
+            'user_index' : self.user_index,
             'userId' : self.user_id,
             'password': self.password,
             'gender': self.gender,
@@ -603,6 +608,7 @@ class UserDto(db.Model):
 
 # Json 형태로 쓰기 위해 씀!
 class UserVo():
+    user_index: int = 0
     user_id: str = ''
     password: str = ''
     gender: int = 0
@@ -619,9 +625,9 @@ class UserTf():
 class UserAi():
     ...
 
-# db.init_app(app)
-# with app.app_context():
-#     db.create_all()
+db.init_app(app)
+with app.app_context():
+    db.create_all()
 
 
     
@@ -637,5 +643,5 @@ class UserDao(UserDto):
         session.commit()
         session.close()
 
-# if __name__ == '__main__':
-#     UserDao.bulk()
+if __name__ == '__main__':
+    UserDao.bulk()

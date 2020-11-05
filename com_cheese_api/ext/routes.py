@@ -1,8 +1,6 @@
-# from com_cheese_api.home.api import Home
-# from com_cheese_api.cheese.api import Cheese
-# from com_cheese_api.fnq.api import Fnq
-# from com_cheese_api.recommend.api import Recommend
-# from com_cheese_api.admin.api import Admin
-# from com_cheese_api.user.api import User
+# from com_cheese_api.resource.user import Users
+
+# users = Blueprint('users', __name__, url_prefix='/api/users')
 
 def initialize_routes(api):
+        return ...
