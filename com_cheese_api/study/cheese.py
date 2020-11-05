@@ -114,32 +114,32 @@ from sklearn.model_selection import train_test_split
     # =====================                  =======================
     # ==============================================================
 
-from datetime import datetime
-from flask import Flask, render_template, url_for, flash, redirect
-from flask_sqlalchemy import SQLAlchemy
+# from datetime import datetime
+# from flask import Flask, render_template, url_for, flash, redirect
+# from flask_sqlalchemy import SQLAlchemy
 
-Session = openSession()
-session = Session()
+# Session = openSession()
+# session = Session()
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-config = {
-    'user': 'bitai',
-    'password': '456123',
-    'host': '127.0.0.1',
-    'port': '3306',
-    'database': 'com_cheese_api'
-}
+# config = {
+#     'user': 'bitai',
+#     'password': '456123',
+#     'host': '127.0.0.1',
+#     'port': '3306',
+#     'database': 'com_cheese_api'
+# }
 
-charset = {'utf8':'utf8'}
+# charset = {'utf8':'utf8'}
 
-url = f"mysql+mysqlconnector://{config['user']}:{config['password']}@{config['host']}:{config['port']}/{config['database']}?charset=utf8"
+# url = f"mysql+mysqlconnector://{config['user']}:{config['password']}@{config['host']}:{config['port']}/{config['database']}?charset=utf8"
 
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = url
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+# app.config['SQLALCHEMY_DATABASE_URI'] = url
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db = SQLAlchemy(app)
 
 
 
@@ -389,15 +389,15 @@ Session = openSession()
 session = Session()
     
 
-class CheeseDao(CheeseDto):
-    @classmethod
-    def bulk(cls, CheeseDf):
-        cheeseDf = CheeseDf()
-        df = CheeseDf.new()
-        print(df.head())
-        session.bulk_insert_mappings(CheeseDto, df.to_dict(orient="records"))
-        session.commit()
-        session.close()
+# class CheeseDao(CheeseDto):
+#     @classmethod
+#     def bulk(cls, CheeseDf):
+#         cheeseDf = CheeseDf()
+#         df = CheeseDf.new()
+#         print(df.head())
+#         session.bulk_insert_mappings(CheeseDto, df.to_dict(orient="records"))
+#         session.commit()
+#         session.close()
 
-if __name__ == '__main__':
-    CheeseDao.bulk()
+# if __name__ == '__main__':
+#     CheeseDao.bulk()
