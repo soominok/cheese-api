@@ -410,9 +410,9 @@ class UserDf:
 '''
 
 
-# if __name__ == '__main__':
-#     userDf = UserDf()
-#     userDf.new()
+if __name__ == '__main__':
+    userDf = UserDf()
+    userDf.new()
 
 
 
@@ -492,15 +492,15 @@ Session = openSession()
 session = Session()
     
 
-class UserDao(UserDto):
-    @classmethod   
-    def bulk():
-        userDf = UserDf()
-        df = userDf.new()
-        print(df.head())
-        session.bulk_insert_mappings(UserDto, df.to_dict(orient="records"))
-        session.commit()
-        session.close()
+# class UserDao(UserDto):
+#     @classmethod
+#     def bulk(cls, UserDf):
+#         userDf = UserDf()
+#         df = UserDf.new()
+#         print(df.head())
+#         session.bulk_insert_mappings(UserDto, df.to_dict(orient="records"))
+#         session.commit()
+#         session.close()
 
-if __name__ == '__main__':
-    UserDao.bulk()
+# if __name__ == '__main__':
+#     UserDao.bulk()
