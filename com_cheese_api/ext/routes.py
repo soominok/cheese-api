@@ -1,36 +1,36 @@
 import logging
 from flask import Blueprint
 from flask_restful import Api
-from com_cheese_api.cmm.hom.resource.home import Home
-# from com_cheese_api.cop.rvw.model.review_dto import ReviewVo
-# from com_cheese_api.cop.chs.model.cheese_dto import CheeseVo
-# from com_cheese_api.cop.rvw.resource.review import Review, Reviews
-# from com_cheese_api.usr.resource.user import User, Users
-# from com_cheese_api.usr.resource.access import Access
 
-# from com_cheese_api.resources.item import Item, Items
-# from com_cheese_api.resources.user import User, Users, Auth, Access
-# from com_cheese_api.resources.cabbage import Cheese
+from com_cheese_api.cmm.hom.home import Home
+from com_cheese_api.usr.user.resource.user import User, Users
+from com_cheese_api.cop.rev.review.model.review_dto import ReviewVo
+from com_cheese_api.cop.rev.review.resource.review import ReviewAPI, ReviewsAPI
+from com_cheese_api.cop.itm.cheese.resource.cheese import Cheeses
 
 home = Blueprint('home', __name__, url_prefix='/api')
-# user = Blueprint('user', __name__, url_prefix='/api/user')
+
+# login_user = Blueprint('login_user', __name__, url_prefix='/api/login')
+user = Blueprint('user', __name__, url_prefix='/api/user')
 users = Blueprint('users', __name__, url_prefix='/api/users')
-# auth = Blueprint('auth', __name__, url_prefix='/api/auth')
-# access = Blueprint('access', __name__, url_prefix='/api/access')
-cabbage = Blueprint('cheese', __name__, url_prefix='/api/cheese')
+
+# cheese = Blueprint('cheese', __name__, url_prefix='/api/cheese')
+cheeses = Blueprint('cheeses', __name__, url_prefix='/api/cheeses')
+
+# review = Blueprint('review', __name__, url_prefix='/api/review')
+# reviews = Blueprint('reviews', __name__, url_prefix='/api/reviews')
+
 
 api = Api(home)
+api = Api(user)
+api = Api(cheeses)
 
 def initialize_routes(api):
     
     api.add_resource(Home, '/api')
-    # api.add_resource(Item, '/api/item/<string:id>')
-    # api.add_resource(Items,'/api/items')
-#     api.add_resource(User, '/api/user/<string:id>')
-#     api.add_resource(Users, '/api/users')
-    # api.add_resource(Auth, '/api/auth')
-    # api.add_resource(Access, '/api/access')
-#     api.add_resource(Cheese, '/api/cheese')
+    api.add_resource(User, '/api/user', '/api/user/<user_id>')
+    api.add_resource(Cheeses, '/api/cheeses')
+
 
 
 @home.errorhandler(500)
@@ -38,16 +38,38 @@ def home_api_error(e):
     logging.exception('An error occurred during home request. %s' % str(e))
     return 'An internal error occurred.', 500
 
-# from com_cheese_api.home.api import Home
-# from com_cheese_api.cheese.api import Cheese
-# from com_cheese_api.recommend.api import Recommend
-# from com_cheese_api.signin.api import SignIn
-# from com_cheese_api.fnq.api import Fnq
+# @user.errorhandler(500)
+# def user_api_error(e):
+#     logging.exception('An error occurred during user request. %s' % str(e))
+#     return 'An internal error occurred.', 500
+
+@cheeses.errorhandler(500)
+def cheeses_api_error(e):
+    logging.exception('An error occurred during cheeses request. %s' % str(e))
+    return 'An internal error occurred.', 500
+
+
+
+# ==============================================================
+# ====================                     =====================
+# ====================         TEST        =====================
+# ====================                     =====================
+# ==============================================================
+
+# from com_cheese_api.home.api import HomeAPI
+# from com_cheese_api.cheese.cheese_api import CheeseAPI
+# from com_cheese_api.board.board_api import BoardAPI
+# from com_cheese_api.suggest.suggest_api import SuggestAPI
+# from com_cheese_api.admin.admin_api import AdminAPI
+# from com_cheese_api.login.login_api import LoginAPI
+# from com_cheese_api.login.sign_up_api import SignUpAPI
 
 
 # def initialize_routes(api):
-#     api.add_resource(Home, '/api')
-#     api.add_resource(Cheese, '/cheese')
-#     api.add_resource(Recommend, '/recommend')
-#     api.add_resource(SignIn, '/signin')
-#     api.add_resource(Fnq, '/fnq')
+#     api.add_resource(HomeAPI, '/api')
+#     api.add_resource(CheeseAPI, '/api/cheese')
+#     api.add_resource(BoardAPI, '/api/board')
+#     api.add_resource(SuggestAPI, '/api/suggest')
+#     api.add_resource(AdminAPI, '/api/admin')
+#     api.add_resource(LoginAPI, '/api/login')
+#     api.add_resource(SignUpAPI, '/api/sign_up')
