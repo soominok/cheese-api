@@ -33,14 +33,14 @@ class UserDto(db.Model):
     # 관계 설정
     #reviews = db.relationship('ReviewDto', back_populates='users')
 
-    def __init__(self, user_no, user_id, password, gender, age_group, cheese_texture, buy_count):
-        self.user_no = user_no
-        self.user_id = user_id
-        self.password = password
-        self.gender = gender
-        self.age_group = age_group
-        self.cheese_texture = cheese_texture
-        self.buy_count = buy_count
+    # def __init__(self, user_no, user_id, password, gender, age_group, cheese_texture, buy_count):
+    #     self.user_no = user_no
+    #     self.user_id = user_id
+    #     self.password = password
+    #     self.gender = gender
+    #     self.age_group = age_group
+    #     self.cheese_texture = cheese_texture
+    #     self.buy_count = buy_count
 
     def __repr__(self):
         return f'User(user_no={self.user_no}, user_id={self.user_id}, password={self.password}, \
@@ -52,6 +52,7 @@ class UserDto(db.Model):
                     gender = {self.gender}, age_group={self.age_group}, \
                     cheese_texture={self.cheese_texture}, buy_count={self.buy_count})'
 
+    @property
     def json(self):
         return {
             'user_no' : self.user_no,

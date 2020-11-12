@@ -48,7 +48,7 @@ class UserDao(UserDto):
     @classmethod
     def update(cls, user):
         session.query(cls).filter(cls.user_no == user['user_no'])\
-            .update({cls.password: user['password'],\
+                .update({cls.password: user['password'],\
                 cls.gender:user['gender'],\
                 cls.age_group:user['age_group']})
         session.commit()
@@ -65,34 +65,36 @@ class UserDao(UserDto):
 
     @classmethod
     def find_all(cls):
-        # print(session.query(cls))
-        sql = cls.query
-        df = pd.read_sql(sql.statement, sql.session.bind)
-        return json.loads(df.to_json(orient='records'))
-        #print(cls.quer)
-        #return session.query(cls).all()
+        return session.query(cls).all()
 
     '''
     SELECT * FROM users
     WHERE user_name LIKE a
     '''
 
-    # @classmethod
-    # def find_one(cls, user_id):
-    #     return session.query(cls) \
-    #         .filter(cls.user_id == user_id).one()
+    @classmethod
+    def find_one(cls, user_id):
+        print('===================cls.user_id=====================')
+        print(cls.user_id)
+        print('===================user_id=====================')
+        print(user_id)
+        a = session.query(cls).filter(cls.user_id == user_id).one()
+        print('=================find_one===================')
+        print(a)
+        print('=================find_one===================')
+        # return session.query(cls).filter(cls.user_id == user_id).one()
 
     # @classmethod
     # def find_by_name(cls, name):
     #     return session.query(cls).filter(cls.user_no.like(f'%{name}%')).all()
 
-    @classmethod
-    def find_by_id(cls, user_id):
-        """
-        주어진 아이디를 토대로 유저를 찾아서
-        해당 정보를 리턴해준다.
-        """
-        return session.query(UserDto).filter(UserDto.user_id.like(f'{user_id}')).one()
+    # @classmethod
+    # def find_by_id(cls, user_id):
+    #     """
+    #     주어진 아이디를 토대로 유저를 찾아서
+    #     해당 정보를 리턴해준다.
+    #     """
+    #     return session.query(UserDto).filter(UserDto.user_id.like(f'{user_id}')).one()
 
     # @classmethod
     # def find_users_in_category(cls, start, end):

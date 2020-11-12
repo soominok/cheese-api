@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 from flask import request
 from flask_restful import Resource, reqparse
+from flask import jsonify
+import json
 # from pathlib import Path
 # from com_cheese_api.ext.db import url, db, openSession, engine
 # from konlpy.tag import Okt
@@ -21,6 +23,7 @@ from flask_restful import Resource, reqparse
 # from sqlalchemy import func
 # from sqlalchemy.ext.declarative import declarative_base
 from com_cheese_api.usr.user.model.user_dao import UserDao
+from com_cheese_api.usr.user.model.user_dto import UserDto
 
 import os
 import json
@@ -34,18 +37,23 @@ dict = json.dumps() => json
 서버와 정보를 주고 받는다.
 '''
 
-parser = reqparse.RequestParser()
+parser = reqparse.RequestParser() 
 
 class User(Resource):
+    # def __init__(self):
+    #     self.dao = UserDao()
+
+
     @staticmethod
     def post():
         print(f'[User Signup Resource Enter]')
         body = request.get_json()
         user = UserDto(**body)
         UserDao.save(user)
-        user_id = user_id
+        user_id = user.user_id
 
-        return {'userId': str(user_id)}, 200
+        return {'user_id': str(user_id)}, 200
+
 
     @staticmethod
     def get(user_id: str):
@@ -54,14 +62,41 @@ class User(Resource):
         Parameter: User ID 를 받아온다
         return: 해당 아이디 유저 객체
         """
+        print('===========user_id=============')
+        print(user_id)
         try:
             print(f'User ID is {user_id}')
-            user = UserDao.find_by_id(user_id)
+            user = UserDao.find_one(user_id)
             if user:
                 return json.dumps(user.json()), 200
         except Exception as e:
             print(e)
             return {'message': 'User not found'}, 404
+
+    # def get(self):
+    #     """
+    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
+    #     Parameter: User ID 를 받아온다
+    #     return: 해당 아이디 유저 객체
+    #     """
+    #     result = self.dao.find_one(user_id)
+    #     return jsonify([item.json for item in result])
+
+    # @staticmethod
+    # def get(user_id: str):
+    #     """
+    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
+    #     Parameter: User ID 를 받아온다
+    #     return: 해당 아이디 유저 객채
+    #     """
+    #     print(f'::::::::::::: User {user_id} added ')
+    #     try:
+    #         user = UserDao.find_by_id(user_id)
+    #         data = user.json()
+    #         return data, 200
+    #     except Exception as e:
+    #         print(e)
+    #         return {'message': 'User not found'}, 404
 
     # @staticmethod
     # def put():
@@ -109,7 +144,7 @@ class User(Resource):
     @staticmethod
     def delete(user_id: str):
         """
-        유저 아디를 받아와 해당 유저를 삭제한다.
+        유저 아이디를 받아와 해당 유저를 삭제한다.
         Parameter: 유저 아이디
         """
         # UserDao.delete(id)
@@ -121,13 +156,30 @@ class User(Resource):
 
 
 class Users(Resource):
+    # def __init__(self, user_no, user_id, password, gender, age_group, cheese_texture, buy_count):
+    # def __init__(self):
+    #     self.dao = UserDao()
+    #     self.user_no = user_no
+    #     self.user_id = user_id
+    #     self.password = password
+    #     self.gender = gender
+    #     self.age_group = age_group
+    #     self.cheese_texture = cheese_texture
+    #     self.buy_count = buy_count
+
     @staticmethod
     def post():
         print(f'[ User Bulk Resource Enter ]')
         UserDao.bulk()
-        
+
     @staticmethod
     def get():
         print(f'[ User List Resource Enter ]')
         data = UserDao.find_all()
         return json.dumps(data), 200
+
+    # def get(self):
+    # def get():
+    #     print(f'[ User List Resource Enter ]')
+    #     data = self.dao.find_all()
+    #     return jsonify([item.json for item in data])

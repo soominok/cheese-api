@@ -23,13 +23,15 @@ cheeses = Blueprint('cheeses', __name__, url_prefix='/api/cheeses')
 
 api = Api(home)
 api = Api(user)
-api = Api(cheeses)
+api = Api(users)
+# api = Api(cheeses)
 
 def initialize_routes(api):
     
     api.add_resource(Home, '/api')
     api.add_resource(User, '/api/user', '/api/user/<user_id>')
-    api.add_resource(Cheeses, '/api/cheeses')
+    api.add_resource(Users, '/api/users')
+    # api.add_resource(Cheeses, '/api/cheeses')
 
 
 
@@ -38,15 +40,15 @@ def home_api_error(e):
     logging.exception('An error occurred during home request. %s' % str(e))
     return 'An internal error occurred.', 500
 
-# @user.errorhandler(500)
-# def user_api_error(e):
-#     logging.exception('An error occurred during user request. %s' % str(e))
-#     return 'An internal error occurred.', 500
-
-@cheeses.errorhandler(500)
-def cheeses_api_error(e):
-    logging.exception('An error occurred during cheeses request. %s' % str(e))
+@user.errorhandler(500)
+def user_api_error(e):
+    logging.exception('An error occurred during user request. %s' % str(e))
     return 'An internal error occurred.', 500
+
+# @cheeses.errorhandler(500)
+# def cheeses_api_error(e):
+#     logging.exception('An error occurred during cheeses request. %s' % str(e))
+#     return 'An internal error occurred.', 500
 
 
 

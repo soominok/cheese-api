@@ -9,12 +9,12 @@ class LoginAPI(Resource):
 
     @staticmethod
     def post():
-        parser.add_argument('userId')
+        parser.add_argument('user_id')
         parser.add_argument('password')
         args = parser.parse_args()
 
         user = UserVo()
-        print(f'[ ID ] {args.userId} \n [ Password ] {args.password}')
+        print(f'[ ID ] {args.user_id} \n [ Password ] {args.password}')
         user.user_id = args.userId
         user.password = args.password
         data = UserDao.login(user)
