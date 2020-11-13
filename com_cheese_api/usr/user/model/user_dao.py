@@ -4,7 +4,7 @@ from com_cheese_api.usr.user.model.user_dfo import UserDfo
 import numpy as np
 import pandas as pd
 # from com_cheese_api.util.file import FileReader
-from com_cheese_api.cmm.utl.file import FileReader
+# from com_cheese_api.cmm.utl.file import FileReader
 from pathlib import Path
 from com_cheese_api.ext.db import url, db, openSession, engine
 import matplotlib.pyplot as plt
@@ -82,19 +82,20 @@ class UserDao(UserDto):
         print('=================find_one===================')
         print(a)
         print('=================find_one===================')
-        # return session.query(cls).filter(cls.user_id == user_id).one()
+        return session.query(cls).filter(cls.user_id == user_id).one()
 
     # @classmethod
     # def find_by_name(cls, name):
     #     return session.query(cls).filter(cls.user_no.like(f'%{name}%')).all()
 
-    # @classmethod
-    # def find_by_id(cls, user_id):
-    #     """
-    #     주어진 아이디를 토대로 유저를 찾아서
-    #     해당 정보를 리턴해준다.
-    #     """
-    #     return session.query(UserDto).filter(UserDto.user_id.like(f'{user_id}')).one()
+    @classmethod
+    def find_by_id(cls, user_id):
+        """
+        주어진 아이디를 토대로 유저를 찾아서
+        해당 정보를 리턴해준다.
+        """
+        # return session.query(UserDto).filter(UserDto.user_id.like(f'{user_id}')).one()
+        return session.query(cls).filter(cls.user_id.like(f'{user_id}')).one()
 
     # @classmethod
     # def find_users_in_category(cls, start, end):

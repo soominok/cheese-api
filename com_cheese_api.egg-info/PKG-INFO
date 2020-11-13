@@ -1,0 +1,11 @@
+Metadata-Version: 1.2
+Name: com-cheese-api
+Version: 1.0
+Summary: Python Distribution Utilities
+Home-page: https://www.python.org/sigs/distutils-sig/
+Author: soominok
+Author-email: sumin00331@naver.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Requires-Python: >=3.7

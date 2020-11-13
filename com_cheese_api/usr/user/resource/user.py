@@ -40,9 +40,6 @@ dict = json.dumps() => json
 parser = reqparse.RequestParser() 
 
 class User(Resource):
-    # def __init__(self):
-    #     self.dao = UserDao()
-
 
     @staticmethod
     def post():
@@ -66,12 +63,30 @@ class User(Resource):
         print(user_id)
         try:
             print(f'User ID is {user_id}')
-            user = UserDao.find_one(user_id)
+            user = UserDao.find_by_id(user_id)
             if user:
-                return json.dumps(user.json()), 200
+                return jsonify([item.json for item in user]), 200
         except Exception as e:
             print(e)
             return {'message': 'User not found'}, 404
+
+    # @staticmethod
+    # def get(user_id: str):
+    #     """
+    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
+    #     Parameter: User ID 를 받아온다
+    #     return: 해당 아이디 유저 객체
+    #     """
+    #     print('===========user_id=============')
+    #     print(user_id)
+    #     try:
+    #         print(f'User ID is {user_id}')
+    #         user = UserDao.find_one(user_id)
+    #         if user:
+    #             return jsonify([item.json for item in user]), 200
+    #     except Exception as e:
+    #         print(e)
+    #         return {'message': 'User not found'}, 404
 
     # def get(self):
     #     """
@@ -176,10 +191,9 @@ class Users(Resource):
     def get():
         print(f'[ User List Resource Enter ]')
         data = UserDao.find_all()
-        return json.dumps(data), 200
+        return jsonify([item.json for item in data])
 
-    # def get(self):
     # def get():
     #     print(f'[ User List Resource Enter ]')
-    #     data = self.dao.find_all()
-    #     return jsonify([item.json for item in data])
+    #     data = UserDao.find_all()
+    #     return json.dumps(data), 200
