@@ -3,6 +3,7 @@ from flask import Blueprint
 from flask_restful import Api
 
 from com_cheese_api.cmm.hom.home import Home
+from com_cheese_api.usr.user.resource.login import Login
 from com_cheese_api.usr.user.resource.user import User, Users
 from com_cheese_api.cop.rev.review.model.review_dto import ReviewVo
 from com_cheese_api.cop.rev.review.resource.review import ReviewAPI, ReviewsAPI
@@ -10,7 +11,7 @@ from com_cheese_api.cop.itm.cheese.resource.cheese import Cheeses
 
 home = Blueprint('home', __name__, url_prefix='/api')
 
-# login_user = Blueprint('login_user', __name__, url_prefix='/api/login')
+login_user = Blueprint('login_user', __name__, url_prefix='/api/login')
 user = Blueprint('user', __name__, url_prefix='/api/user')
 users = Blueprint('users', __name__, url_prefix='/api/users')
 
@@ -22,6 +23,7 @@ cheeses = Blueprint('cheeses', __name__, url_prefix='/api/cheeses')
 
 
 api = Api(home)
+api = Api(login_user)
 api = Api(user)
 api = Api(users)
 # api = Api(cheeses)
@@ -29,7 +31,9 @@ api = Api(users)
 def initialize_routes(api):
     
     api.add_resource(Home, '/api')
-    api.add_resource(User, '/api/user', '/api/user/<user_id>')
+    api.add_resource(Login, '/api/login')
+    api.add_resource(User, '/api/user/<user_id>')
+    # api.add_resource(User, '/api/user/<user_id>')
     api.add_resource(Users, '/api/users')
     # api.add_resource(Cheeses, '/api/cheeses')
 

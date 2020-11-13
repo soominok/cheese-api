@@ -51,7 +51,6 @@ class User(Resource):
 
         return {'user_id': str(user_id)}, 200
 
-
     @staticmethod
     def get(user_id: str):
         """
@@ -64,11 +63,75 @@ class User(Resource):
         try:
             print(f'User ID is {user_id}')
             user = UserDao.find_by_id(user_id)
+            
             if user:
-                return jsonify([item.json for item in user]), 200
+                return jsonify([user.json])
         except Exception as e:
             print(e)
             return {'message': 'User not found'}, 404
+
+
+    @staticmethod
+    def put(user_id: str):
+        """
+        서버에서 해당 ID 의 새로운 유저 정보를 받아온다.
+        정보를 토대로 해당 ID 유저의 정보를 바꿔서
+        정보를 서버에 보내준다.
+        parameter: 유저 아이디를 받아온다
+        return: 새로운 유저 데이터를 리턴 한다
+        """
+        parser = reqparse.RequestParser()  # only allow price changes, no name changes allowed
+        parser.add_argument('user_id', type=str, required=True,
+                                                help='This field should be a user_id')
+        parser.add_argument('password', type=str, required=True,
+                                                help='This field should be a password')
+        parser.add_argument('gender', type=str, required=True,
+                                                help='This field should be a gender')
+        parser.add_argument('age_group', type=str, required=True,
+                                                help='This field should be a age_group')
+
+        print("argument added")
+        # def __init__(self, user_id, password,fname, lname, age, gender,email):
+        args = parser.parse_args()
+        print(f'User {args["user_id"]} updated')
+        print(f'User {args["password"]} updated')
+        user = UserDto(args.user_id, args.password, args.gender, args.age_group,)
+        print("user created")
+        UserDao.update(user)
+        data = user.json()
+        return data, 200
+
+    @staticmethod
+    def delete(user_id: str):
+        """
+        유저 아이디를 받아와 해당 유저를 삭제한다.
+        Parameter: 유저 아이디
+        """
+        # UserDao.delete(id)
+        # print(f'User {id} Deleted')
+        print(f'[ User Delete Resource Enter ]')
+        args = parser.parse_args()
+        print(f'User {args["user_id"]} deleted')
+        return {'code': 0, 'message': 'SUCCESS'}, 200
+
+    # @staticmethod
+    # def get(user_id: str):
+    #     """
+    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
+    #     Parameter: User ID 를 받아온다
+    #     return: 해당 아이디 유저 객체
+    #     """
+    #     print('===========user_id=============')
+    #     print(user_id)
+    #     try:
+    #         print(f'User ID is {user_id}')
+    #         user = UserDao.find_by_id(user_id)
+            
+    #         if user:
+    #             return json.dumps(user.json()), 200
+    #     except Exception as e:
+    #         print(e)
+    #         return {'message': 'User not found'}, 404
 
     # @staticmethod
     # def get(user_id: str):
@@ -83,7 +146,9 @@ class User(Resource):
     #         print(f'User ID is {user_id}')
     #         user = UserDao.find_one(user_id)
     #         if user:
-    #             return jsonify([item.json for item in user]), 200
+    #             data = []
+    #             data.append()
+    #             return jsonify([item.json for item in data]), 200
     #     except Exception as e:
     #         print(e)
     #         return {'message': 'User not found'}, 404
@@ -126,61 +191,7 @@ class User(Resource):
     #     if args.password == user.password and \
     #         args.
 
-    @staticmethod
-    def put(user_id: str):
-        """
-        서버에서 해당 ID 의 새로운 유저 정보를 받아온다.
-        정보를 토대로 해당 ID 유저의 정보를 바꿔서
-        정보를 서버에 보내준다.
-        parameter: 유저 아이디를 받아온다
-        return: 새로운 유저 데이터를 리턴 한다
-        """
-        parser = reqparse.RequestParser()  # only allow price changes, no name changes allowed
-        parser.add_argument('user_id', type=str, required=True,
-                                                help='This field should be a user_id')
-        parser.add_argument('password', type=str, required=True,
-                                                help='This field should be a password')
-        parser.add_argument('gender', type=str, required=True,
-                                                help='This field should be a gender')
-        parser.add_argument('age_group', type=str, required=True,
-                                                help='This field should be a age_group')
-
-        print("argument added")
-        # def __init__(self, user_id, password,fname, lname, age, gender,email):
-        args = parser.parse_args()
-        print(f'User {args["user_id"]} updated')
-        print(f'User {args["password"]} updated')
-        user = UserDto(args.user_id, args.password,  args.gender, args.age_group,)
-        print("user created")
-        UserDao.update(user)
-        data = user.json()
-        return data, 200
-
-    @staticmethod
-    def delete(user_id: str):
-        """
-        유저 아이디를 받아와 해당 유저를 삭제한다.
-        Parameter: 유저 아이디
-        """
-        # UserDao.delete(id)
-        # print(f'User {id} Deleted')
-        print(f'[ User Delete Resource Enter ]')
-        args = parser.parse_args()
-        print(f'User {args["userId"]} deleted')
-        return {'code': 0, 'message': 'SUCCESS'}, 200
-
-
 class Users(Resource):
-    # def __init__(self, user_no, user_id, password, gender, age_group, cheese_texture, buy_count):
-    # def __init__(self):
-    #     self.dao = UserDao()
-    #     self.user_no = user_no
-    #     self.user_id = user_id
-    #     self.password = password
-    #     self.gender = gender
-    #     self.age_group = age_group
-    #     self.cheese_texture = cheese_texture
-    #     self.buy_count = buy_count
 
     @staticmethod
     def post():
@@ -192,6 +203,7 @@ class Users(Resource):
         print(f'[ User List Resource Enter ]')
         data = UserDao.find_all()
         return jsonify([item.json for item in data])
+        # return json.dumps(jsonify([item.json for item in data])), 200
 
     # def get():
     #     print(f'[ User List Resource Enter ]')

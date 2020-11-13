@@ -4,7 +4,7 @@ from com_cheese_api.usr.user.model.user_dto import UserVo
 
 parser = reqparse.RequestParser()
 
-class LoginAPI(Resource):
+class Login(Resource):
     print(f'[ User Login Resource Enter ]')
 
     @staticmethod

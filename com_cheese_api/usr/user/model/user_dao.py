@@ -94,8 +94,10 @@ class UserDao(UserDto):
         주어진 아이디를 토대로 유저를 찾아서
         해당 정보를 리턴해준다.
         """
+        # return session.query(cls).filter(cls.user_id.like(f'{user_id}')).all()
+        return session.query(cls).filter(cls.user_id.like(f'{user_id}')).first()
+
         # return session.query(UserDto).filter(UserDto.user_id.like(f'{user_id}')).one()
-        return session.query(cls).filter(cls.user_id.like(f'{user_id}')).one()
 
     # @classmethod
     # def find_users_in_category(cls, start, end):
@@ -127,25 +129,31 @@ class UserDao(UserDto):
     WHERE user_id LIKE '1' AND password LIKE '1'
     '''
 
-    @classmethod
-    def login(cls, user):
-        """
-        유저 정보를 받아와, 해당 유저가 데이터베이스에 있는지 확인.
-        확인 후, 있으면 로그인 시켜준다.
-        Parameter: 유저 모델을 받아온다
-        return: 유저 정보를 리턴해준다.
-        """
-        print("----------------login")
-        sql = cls.query\
-            .filter(cls.usr_id.like(user.usr_id))\
-            .filter(cls.password.like(user.password))
-        print("login type ", type(sql))
-        df = pd.read_sql(sql.statement, sql.session.bind)
-        print(json.loads(df.to_json(orient='records')))
-        return json.loads(df.to_json(orient='records'))
+    # @classmethod
+    # def login(cls, user):
+    #     """
+    #     유저 정보를 받아와, 해당 유저가 데이터베이스에 있는지 확인.
+    #     확인 후, 있으면 로그인 시켜준다.
+    #     Parameter: 유저 모델을 받아온다
+    #     return: 유저 정보를 리턴해준다.
+    #     """
+    #     print("----------------login")
+    #     sql = cls.query\
+    #         .filter(cls.user_id.like(user.user_id))\
+    #         .filter(cls.password.like(user.password))
+    #     print("login type ", type(sql))
+    #     df = pd.read_sql(sql.statement, sql.session.bind)
+    #     print(json.loads(df.to_json(orient='records')))
+    #     return json.loads(df.to_json(orient='records'))
+
         # return session.query(cls)\
         #     .filter(cls.user_id == user.user_id,
         #         cls.password == user.password).one()
+
+    @classmethod
+    def login(cls, user):
+        return session.query(cls).filter(cls.user_id == user.user_id,
+            cls.password == user.password).first()
 
 
     # '''
