@@ -32,7 +32,7 @@ def initialize_routes(api):
     
     api.add_resource(Home, '/api')
     api.add_resource(Login, '/api/login')
-    api.add_resource(User, '/api/user/<user_id>')
+    api.add_resource(User, '/api/user', '/api/user/<user_id>')
     # api.add_resource(User, '/api/user/<user_id>')
     api.add_resource(Users, '/api/users')
     # api.add_resource(Cheeses, '/api/cheeses')

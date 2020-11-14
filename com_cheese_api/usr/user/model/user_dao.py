@@ -184,8 +184,8 @@ class UserDao(UserDto):
 
 
 
-# if __name__ == '__main__':
-#     """
-#     데이터 베이스에 모든 유저 정보들을 넣어준다.
-#     """
-#     UserDao.bulk()
+if __name__ == '__main__':
+    """
+    데이터 베이스에 모든 유저 정보들을 넣어준다.
+    """
+    UserDao.bulk()

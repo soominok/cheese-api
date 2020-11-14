@@ -63,17 +63,20 @@ class UserDfo:
 
         # print(min(this.user['user_age'])) # 고객 최소 나이 : 10
         # print(max(this.user['user_age'])) # 고객 최대 나이 : 80
-        this = UserDfo.user_age_nominal(this)
+        # this = UserDfo.user_age_nominal(this)
         print(f'######## age 전처리 체크 ##########')
         print(this.user.head(10))
         this = UserDfo.cheese_code_ordinal(this)
         this = UserDfo.buy_count_numeric(this)
         # this = UserDfo.cheese_category_nominal(this)
         # this = UserDfo.cheese_texture_nominal(this)
+        print(f'######## cheese, count 전처리 체크 ##########')
+        print(this.user.head(10))
+
         this = UserDfo.user_price_numeric(this)
         this = UserDfo.total_buy_price(this)
 
-        print(f'Preprocessing User Dataset : {this.user}')
+        # print(f'Preprocessing User Dataset : {this.user}')
 
         print(f'######## train na 체크 ##########')
         print(f'{this.user.isnull().sum()}')
@@ -88,10 +91,11 @@ class UserDfo:
                 'user_no': this.user.user_no,
                 'user_id': this.user.user_id,
                 'password': '1',
-                'gender': this.user.gender,
-                'age_group': this.user.age_group,
+                'gender': this.user.user_gender,
+                # 'age_group': this.user.age_group,
+                'age': this.user.user_age,
                 'cheese_name': this.user.cheese_name,
-                'cheese_texture': this.user.cheese_texture_code,
+                'cheese_texture': this.user.cheese_texture,
                 'cheese_category': this.user.cheese_category,
                 'buy_count': this.user.buy_count,
                 'total_price': this.user.total_price
@@ -100,7 +104,8 @@ class UserDfo:
         )
 
         self.odf.to_csv(os.path.join('com_cheese_api/usr/user/data', 'user_data.csv'), index=False, encoding='utf-8-sig')
-        
+        print(f'######## 최종 user DF 결과 ##########')
+        print(self.odf)
         return self.odf
 
 
@@ -179,7 +184,6 @@ class UserDfo:
         return this
 
     @staticmethod
-
     def user_gender_nominal(this) -> object:
         gender_mapping = {'M': 0, 'F': 1}
         this.user['gender'] = this.user['user_gender'].map(gender_mapping)
@@ -193,26 +197,9 @@ class UserDfo:
         this.user['cheese_one_price'] = this.user['cheese_one_price'].str.replace(',', '')
         this.user['cheese_one_price'] = this.user['cheese_one_price'].str.replace('원', '')
         this.user = this.user.astype({'cheese_one_price': int})
-
-
-    @staticmethod
-    def user_age_nominal(this) -> object:
-        user = this.user
-        bins = [1, 29, 39, 49, 59, np.inf]
-        labels = ['Youth', 'Adult30', 'Adult40', 'Adult50', 'Senior']
-        user['age_group'] = pd.cut(user['user_age'], bins, right = True, labels = labels)
-        age_mapping = {
-                'Youth': 1,
-                'Adult30': 2 ,
-                'Adult40': 3 ,
-                'Adult50': 4,
-                'Senior': 5
-        }
-        user['age_group'] = user['age_group'].map(age_mapping)
-        this.user = this.user # overriding
-        print(this.user)
-        # this.user.to_csv(os.path.join('data', 'user_check.csv'), index=False, encoding='utf-8-sig')
+        this.user = this.user
         return this
+
 
     @staticmethod
     def cheese_code_ordinal(this) -> object:
@@ -220,73 +207,37 @@ class UserDfo:
 
     @staticmethod
     def total_buy_price(this) -> object:
-        this.user['total_price'] = this.user['cheese_one_price'] * this.user['buy_count_numeric']
+        this.user['total_price'] = this.user['cheese_one_price'] * this.user['buy_count']
         return this
 
-#######################더미변수로?! 여쭤보기~~###############################
-    # @staticmethod
-    # def cheese_brand_nominal(this) -> object:
-    #     train = this.train
-    #     test = this.test
-
-    #     train[]
 
     @staticmethod
     def buy_count_numeric(this) -> object:
         return this
 
-    @staticmethod
-    def cheese_category_nominal(this) -> object:
-        this.user['cheese_category_code'] = this.user['cheese_category'].map({
-            '모짜렐라': 1,
-            '블루치즈': 2,
-            '리코타': 3,
-            '체다': 4,
-            '파르미지아노 레지아노': 5,
-            '고다': 6,
-            '까망베르': 7,
-            '브리': 8,
-            '만체고': 9,
-            '에멘탈': 10,
-            '부라타': 11
-        })
-        return this
-
-    @staticmethod
-    def cheese_texture_nominal(this) -> object:
-        this.user['cheese_texture_code'] = this.user['cheese_texture'].map({
-            '후레쉬치즈': 1,
-            '세미하드치즈': 2,
-            '세미하드': 2,
-            '하드치즈': 3,
-            '소프트치즈': 4,
-            '연성치즈': 5,
-            '경성치즈': 6
-        })
-
-        return this
 
 
 '''
-        user_no  user_id password  gender  age_group  cheese_texture  buy_count
-0         3312  1751881        1       1          2               1          2
-1        21971  1835210        1       1          2               1          2
-2         2347  5824726        1       1          4               1          1
-3        18459  1752218        1       0          3               1          3
-4         8768  2034072        1       1          3               1          1
-...        ...      ...      ...     ...        ...             ...        ...
-25806    19527  1718175        1       1          1               1          1
-25807    24828  2155344        1       1          3               4          1
-25808    20414  5939075        1       1          2               2          3
-25809     9526  4959284        1       1          2               1          1
-25810    10967  1747758        1       1          4               2          1
-[25811 rows x 7 columns]
+       user_no  user_id password gender  age  cheese_name cheese_texture cheese_category  buy_count  total_price
+0            0  2391853        1      M   40       리코타 치즈          후레쉬치즈             리코타          1         4600
+1            1  1799897        1      F   40       리코타 치즈          후레쉬치즈             리코타          1         4600
+2            2  1614947        1      F   50         모짜렐라          후레쉬치즈            모짜렐라          1         5500
+3            3  1614947        1      F   50         모짜렐라          후레쉬치즈            모짜렐라          1         5500
+4            4  1614947        1      F   50         모짜렐라          후레쉬치즈            모짜렐라          5        24500
+...        ...      ...      ...    ...  ...          ...            ...             ...        ...          ...
+36868    36868  6159545        1      F   30      캄보졸라 치즈          소프트치즈            블루치즈          1         6400
+36869    36869  1942828        1      M   40  덴마크 까망베르 치즈          소프트치즈            까망베르          1         4165
+36870    36870  1942828        1      M   40  덴마크 까망베르 치즈          소프트치즈            까망베르          1         4165
+36871    36871  6284056        1      M   30   락토스프리 모짜렐라          후레쉬치즈            모짜렐라          2        11400
+36872    36872  1306045        1      F   40       리코타 치즈          후레쉬치즈             리코타          1         4600
+
+[36873 rows x 10 columns]
 '''
 
 
-# if __name__ == '__main__':
-#     UserDfo = UserDfo()
-#     UserDfo.new()
+if __name__ == '__main__':
+    UserDfo = UserDfo()
+    UserDfo.new()
 
 
 # class UserDfo:
@@ -675,6 +626,6 @@ class UserDfo:
 # '''
 
 
-# # if __name__ == '__main__':
-# #     UserDfo = UserDfo()
-# #     UserDfo.new()
+# if __name__ == '__main__':
+#     UserDfo = UserDfo()
+#     UserDfo.new()
