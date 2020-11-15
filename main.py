@@ -3,8 +3,11 @@ from flask_restful import Api
 from com_cheese_api.ext.db import url, db, openSession
 from com_cheese_api.ext.routes import initialize_routes
 
-# from com_cheese_api.usr.user.model.user_dfo import UserDfo
+from com_cheese_api.usr.user.model.user_dfo import UserDfo
 from com_cheese_api.usr.user.model.user_dao import UserDao
+
+from com_cheese_api.cop.ord.order.model.order_dfo import OrderDfo
+from com_cheese_api.cop.ord.order.model.order_dao import OrderDao
 
 # from com_cheese_api.cop.itm.cheese.model.cheese_dfo import CheeseDfo
 from com_cheese_api.cop.itm.cheese.model.cheese_dao import CheeseDao
@@ -51,6 +54,8 @@ with app.app_context():
     # UserDao.bulk()
     # user_all.bulk()
 
+
+    OrderDao.bulk()
 
     # cheese_all = CheeseDao.find_all()
     # print(f'========Cheese all {cheese_all} ==========')
