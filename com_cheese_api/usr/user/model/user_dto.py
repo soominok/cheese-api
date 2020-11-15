@@ -16,29 +16,30 @@ class UserDto(db.Model):
     __tablename__ = 'users'
     __table_args__ = {'mysql_collate':'utf8_general_ci'}
 
-    user_no: int = db.Column(db.Integer, primary_key= True, autoincrement=True, index = True)
-    name: str = db.Column(db.String(5))
-    user_id: str = db.Column(db.String(20))
+    # user_no: int = db.Column(db.Integer, primary_key= True, autoincrement=True, index = True)
+    # user_id: str = db.Column(db.String(20))
+    user_id: str = db.Column(db.String(20), primary_key=True, index=True)
     password: str = db.Column(db.String(5))
+    name: str = db.Column(db.String(5))
     gender: str = db.Column(db.String(5))
     age: int = db.Column(db.Integer)
     phone: str = db.Column(db.String(20))
     email: str = db.Column(db.String(100))
 
-    # orders = db.relationship('OrderDto', back_populates='user', lazy='dynamic')
+    orders = db.relationship('OrderDto', back_populates='user', lazy='dynamic')
     # prices = db.relationship('PriceDto', back_populates='user', lazy='dynamic')
     # articles = db.relationship('ArticleDto', back_populates='user', lazy='dynamic')
-
+    # cheeses = db.relationship('CheeseDto', back_populates='users', lazy='dynamic')
     # reviews = db.relationship('ReviewDto', back_populates='users', lazy='dynamic')
     
     # 관계 설정
     #reviews = db.relationship('ReviewDto', back_populates='users')
 
-    def __init__(self, user_no, name, user_id, password, gender, age, phone, email):
-        self.user_no = user_no
-        self.name = name
+    def __init__(self, user_id, password, name, gender, age, phone, email):
+        # self.user_no = user_no
         self.user_id = user_id
         self.password = password
+        self.name = name
         self.gender = gender
         self.age = age
         self.phone = phone
@@ -46,20 +47,20 @@ class UserDto(db.Model):
 
 
     def __repr__(self):
-        return f'User(user_no={self.user_no}, name={self.name}, user_id={self.user_id}, password={self.password}, \
+        return f'User(user_id={self.user_id}, password={self.password}, name={self.name}, \
                     gender = {self.gender}, age={self.age}, phone={self.phone}, email={self.email})'
 
     def __str__(self):
-        return f'User(user_no={self.user_no}, name={self.name}, user_id={self.user_id}, password={self.password}, \
+        return f'User(user_id={self.user_id}, password={self.password}, name={self.name}, \
                     gender = {self.gender}, age={self.age}, phone={self.phone}, email={self.email})'
 
     @property
     def json(self):
         return {
-            'user_no' : self.user_no,
-            'name': self.name,
+            # 'user_no' : self.user_no,
             'user_id' : self.user_id,
             'password': self.password,
+            'name': self.name,
             'gender': self.gender,
             'age': self.age,
             'phone': self.phone,
@@ -68,10 +69,10 @@ class UserDto(db.Model):
 
 # Json 형태로 쓰기 위해 씀!
 class UserVo():
-    user_no: int = 0
-    name: str = ''
+    # user_no: int = 0
     user_id: str = ''
     password: str = ''
+    name: str = ''
     gender: str = ''
     age: int = 0
     phone: str = ''

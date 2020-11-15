@@ -183,8 +183,8 @@ class OrderDao(OrderDto):
 
 
 
-if __name__ == '__main__':
-    """
-    데이터 베이스에 모든 유저 정보들을 넣어준다.
-    """
-    OrderDao.bulk()
+# if __name__ == '__main__':
+#     """
+#     데이터 베이스에 모든 유저 정보들을 넣어준다.
+#     """
+#     OrderDao.bulk()

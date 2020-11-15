@@ -29,8 +29,8 @@ class ReviewDto(db.Model):
     review_detail: str = db.Column(db.String(500))
 
     # FK
-    #user_id = db.Column(db.String(10), db.ForeignKey(UserDto.user_id))
-    user_no = db.Column(db.Integer, db.ForeignKey(UserDto.user_no))
+    user_id = db.Column(db.String(10), db.ForeignKey(UserDto.user_id))
+    # user_no = db.Column(db.Integer, db.ForeignKey(UserDto.user_no))
     cheese_id = db.Column(db.String(30), db.ForeignKey(CheeseDto.cheese_id))
 
 
@@ -38,23 +38,23 @@ class ReviewDto(db.Model):
     # user = db.relationship('UserDto', back_populates='reviews')
     #item = db.relationship('CheeseDto', back_populates='reviews')
 
-    def __init__(self, review_id, review_title, review_detail, user_no, cheese_id):
+    def __init__(self, review_id, review_title, review_detail, user_id, cheese_id):
         self.review_id = review_id
         self.review_title = review_title
         self.review_detail = review_detail
-        # self.user_id = user_id
-        self.user_no = user_no
+        self.user_id = user_id
+        # self.user_no = user_no
         self.cheese_id = cheese_id
 
     def __repr__(self):
-        return f'review_id={self.review_id}, user_no={self.user_no}, cheese_id={self.cheese_id},\
+        return f'review_id={self.review_id}, user_id={self.user_id}, cheese_id={self.cheese_id},\
             review_title={self.review_title}, review_detail={self.review_detail}'
 
     def json(self):
         return {
             'review_id': self.review_id,
-            #'user_id': self.user_id,
-            'user_no': self.user_no,
+            'user_id': self.user_id,
+            # 'user_no': self.user_no,
             'cheese_id': self.cheese_id,
             'review_title': self.review_title,
             'review_detail': self.review_detail
@@ -63,8 +63,8 @@ class ReviewDto(db.Model):
 
 class ReviewVo():
     review_id: int = 0
-    # user_id: str = ''
-    user_no: int = 0
+    user_id: str = ''
+    # user_no: int = 0
     cheese_id: int = 0
     review_title: str = ''
     review_detail: str = ''

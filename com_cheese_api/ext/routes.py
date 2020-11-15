@@ -3,44 +3,73 @@ from flask import Blueprint
 from flask_restful import Api
 
 from com_cheese_api.cmm.hom.home import Home
-from com_cheese_api.usr.user.resource.login import Login
 from com_cheese_api.usr.user.resource.user import User, Users
+from com_cheese_api.usr.user.resource.login import Login
+from com_cheese_api.usr.user.resource.signup import SignUp
 from com_cheese_api.cop.ord.order.resource.order import Order, Orders
 
 from com_cheese_api.cop.rev.review.model.review_dto import ReviewVo
 from com_cheese_api.cop.rev.review.resource.review import ReviewAPI, ReviewsAPI
 from com_cheese_api.cop.itm.cheese.resource.cheese import Cheeses
 
+############################## HOME ##############################
 home = Blueprint('home', __name__, url_prefix='/api')
 
-login_user = Blueprint('login_user', __name__, url_prefix='/api/login')
+api = Api(home)
+
+
+############################## USER ##############################
 user = Blueprint('user', __name__, url_prefix='/api/user')
 users = Blueprint('users', __name__, url_prefix='/api/users')
+login = Blueprint('login', __name__, url_prefix='/api/login')
+signup = Blueprint('signup', __name__, url_prefix='/api/signup')
 
+api = Api(user)
+api = Api(users)
+api = Api(login)
+api = Api(signup)
+
+############################## ORDER ##############################
 order = Blueprint('order', __name__, url_prefix='/api/order')
 orders = Blueprint('orders', __name__, url_prefix='/api/orders')
+
+api = Api(order)
+api = Api(orders)
+
+############################## CHEESE ##############################
 # cheese = Blueprint('cheese', __name__, url_prefix='/api/cheese')
 # cheeses = Blueprint('cheeses', __name__, url_prefix='/api/cheeses')
 
+# api = Api(cheeses)
+
+
+############################## REVIEW ##############################
 # review = Blueprint('review', __name__, url_prefix='/api/review')
 # reviews = Blueprint('reviews', __name__, url_prefix='/api/reviews')
 
 
-api = Api(home)
-api = Api(login_user)
-api = Api(user)
-api = Api(users)
-api = Api(order)
-api = Api(orders)
-# api = Api(cheeses)
+############################## CHATBOT ##############################
+# chatbot = Blueprint('chatbot', __name__, url_prefix='/api/chatbot')
 
-def initialize_routes(api):
-    
+# api = Api(chatbot)
+
+
+####################################################################
+
+
+
+
+
+def initialize_routes(api):    
     api.add_resource(Home, '/api')
-    api.add_resource(Login, '/api/login')
+
+############################## USER ##############################    
     api.add_resource(User, '/api/user', '/api/user/<user_id>')
-    # api.add_resource(User, '/api/user/<user_id>')
     api.add_resource(Users, '/api/users')
+    api.add_resource(Login, '/api/login')
+    api.add_resource(SignUp, '/api/signup')
+
+############################## ORDER ##############################
     api.add_resource(Order, '/api/order/<user_id>')
     api.add_resource(Orders, '/api/orders')
     # api.add_resource(Cheeses, '/api/cheeses')
@@ -54,6 +83,16 @@ def home_api_error(e):
 
 @user.errorhandler(500)
 def user_api_error(e):
+    logging.exception('An error occurred during user request. %s' % str(e))
+    return 'An internal error occurred.', 500
+
+@user.errorhandler(500)
+def login_api_error(e):
+    logging.exception('An error occurred during user request. %s' % str(e))
+    return 'An internal error occurred.', 500
+
+@user.errorhandler(500)
+def auth_api_error(e):
     logging.exception('An error occurred during user request. %s' % str(e))
     return 'An internal error occurred.', 500
 
