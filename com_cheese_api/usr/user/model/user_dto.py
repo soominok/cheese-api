@@ -26,7 +26,7 @@ class UserDto(db.Model):
     phone: str = db.Column(db.String(20))
     email: str = db.Column(db.String(100))
 
-    orders = db.relationship('OrderDto', back_populates='user', lazy='dynamic')
+    # orders = db.relationship('OrderDto', back_populates='user', lazy='dynamic')
     # prices = db.relationship('PriceDto', back_populates='user', lazy='dynamic')
     # articles = db.relationship('ArticleDto', back_populates='user', lazy='dynamic')
     # cheeses = db.relationship('CheeseDto', back_populates='users', lazy='dynamic')

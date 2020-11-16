@@ -10,6 +10,7 @@ from flask import request
 from flask_restful import Resource, reqparse
 from flask import jsonify
 import json
+import os
 # from pathlib import Path
 # from com_cheese_api.ext.db import url, db, openSession, engine
 # from konlpy.tag import Okt
@@ -21,8 +22,7 @@ import json
 # from sqlalchemy import func
 # from sqlalchemy.ext.declarative import declarative_base
 
-import os
-import json
+
 
 '''
 json = json.loads() => dict
@@ -109,70 +109,6 @@ class Order(Resource):
         args = parser.parse_args()
         print(f'User {args["user_id"]} deleted')
         return {'code': 0, 'message': 'SUCCESS'}, 200
-
-    # @staticmethod
-    # def get(user_id: str):
-    #     """
-    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
-    #     Parameter: User ID 를 받아온다
-    #     return: 해당 아이디 유저 객체
-    #     """
-    #     print('===========user_id=============')
-    #     print(user_id)
-    #     try:
-    #         print(f'User ID is {user_id}')
-    #         user = UserDao.find_by_id(user_id)
-            
-    #         if user:
-    #             return json.dumps(user.json()), 200
-    #     except Exception as e:
-    #         print(e)
-    #         return {'message': 'User not found'}, 404
-
-    # @staticmethod
-    # def get(user_id: str):
-    #     """
-    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
-    #     Parameter: User ID 를 받아온다
-    #     return: 해당 아이디 유저 객체
-    #     """
-    #     print('===========user_id=============')
-    #     print(user_id)
-    #     try:
-    #         print(f'User ID is {user_id}')
-    #         user = UserDao.find_one(user_id)
-    #         if user:
-    #             data = []
-    #             data.append()
-    #             return jsonify([item.json for item in data]), 200
-    #     except Exception as e:
-    #         print(e)
-    #         return {'message': 'User not found'}, 404
-
-    # def get(self):
-    #     """
-    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
-    #     Parameter: User ID 를 받아온다
-    #     return: 해당 아이디 유저 객체
-    #     """
-    #     result = self.dao.find_one(user_id)
-    #     return jsonify([item.json for item in result])
-
-    # @staticmethod
-    # def get(user_id: str):
-    #     """
-    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
-    #     Parameter: User ID 를 받아온다
-    #     return: 해당 아이디 유저 객채
-    #     """
-    #     print(f'::::::::::::: User {user_id} added ')
-    #     try:
-    #         user = UserDao.find_by_id(user_id)
-    #         data = user.json()
-    #         return data, 200
-    #     except Exception as e:
-    #         print(e)
-    #         return {'message': 'User not found'}, 404
 
     # @staticmethod
     # def put():

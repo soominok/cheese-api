@@ -7,6 +7,8 @@ from com_cheese_api.usr.user.resource.user import User, Users
 from com_cheese_api.usr.user.resource.login import Login
 from com_cheese_api.usr.user.resource.signup import SignUp
 from com_cheese_api.cop.ord.order.resource.order import Order, Orders
+from com_cheese_api.cop.ord.order.resource.search import OrderSearch
+from com_cheese_api.cop.ord.order.resource.best import OrderBest
 
 from com_cheese_api.cop.rev.review.model.review_dto import ReviewVo
 from com_cheese_api.cop.rev.review.resource.review import ReviewAPI, ReviewsAPI
@@ -32,9 +34,13 @@ api = Api(signup)
 ############################## ORDER ##############################
 order = Blueprint('order', __name__, url_prefix='/api/order')
 orders = Blueprint('orders', __name__, url_prefix='/api/orders')
+search = Blueprint('search', __name__, url_prefix='/api/search')
+best = Blueprint('best', __name__, url_prefix='/api/best')
 
 api = Api(order)
 api = Api(orders)
+api = Api(search)
+api = Api(best)
 
 ############################## CHEESE ##############################
 # cheese = Blueprint('cheese', __name__, url_prefix='/api/cheese')
@@ -72,6 +78,8 @@ def initialize_routes(api):
 ############################## ORDER ##############################
     api.add_resource(Order, '/api/order/<user_id>')
     api.add_resource(Orders, '/api/orders')
+    api.add_resource(OrderSearch, '/api/search/<user_id>')
+    api.add_resource(OrderBest, '/api/best')
     # api.add_resource(Cheeses, '/api/cheeses')
 
 

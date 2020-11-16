@@ -81,7 +81,7 @@ class OrderDto(db.Model):
     __tablename__ = 'orders'
     __table_args__ = {'mysql_collate':'utf8_general_ci'}
 
-    user_no: int = db.Column(db.Integer, primary_key= True, index = True)
+    order_no: int = db.Column(db.Integer, primary_key= True, autoincrement=True, index = True)
     user_id: str = db.Column(db.String(20))
     password: str = db.Column(db.String(5))
     gender: str = db.Column(db.String(5))
@@ -101,8 +101,8 @@ class OrderDto(db.Model):
     # 관계 설정
     #reviews = db.relationship('ReviewDto', back_populates='users')
 
-    def __init__(self, user_no, user_id, password, gender, age, cheese_texture, buy_count):
-        self.user_no = user_no
+    def __init__(self, order_no, user_id, password, gender, age, cheese_texture, buy_count):
+        self.order_no = order_no
         self.user_id = user_id
         self.password = password
         self.gender = gender
@@ -114,13 +114,13 @@ class OrderDto(db.Model):
         self.total_price = total_price
 
     def __repr__(self):
-        return f'User(user_no={self.user_no}, user_id={self.user_id}, password={self.password}, \
+        return f'User(order_no={self.order_no}, user_id={self.user_id}, password={self.password}, \
                     gender = {self.gender}, age={self.age}, cheese_name={self.cheese_name},\
                     cheese_texture={self.cheese_texture}, cheese_category={self.cheese_category}, \
                     buy_count={self.buy_count}, total_price={self.total_price})'
 
     def __str__(self):
-        return f'User(user_no={self.user_no}, user_id={self.user_id}, password={self.password}, \
+        return f'User(order_no={self.order_no}, user_id={self.user_id}, password={self.password}, \
                     gender = {self.gender}, age={self.age}, cheese_name={self.cheese_name},\
                     cheese_texture={self.cheese_texture}, cheese_category={self.cheese_category}, \
                     buy_count={self.buy_count}, total_price={self.total_price})'
@@ -128,7 +128,7 @@ class OrderDto(db.Model):
     @property
     def json(self):
         return {
-            'user_no' : self.user_no,
+            'order_no' : self.order_no,
             'user_id' : self.user_id,
             'password': self.password,
             'gender': self.gender,
@@ -137,12 +137,13 @@ class OrderDto(db.Model):
             'cheese_texture': self.cheese_texture,
             'cheese_category': self.cheese_category,
             'buy_count': self.buy_count,
-            'total_price': self.total_price
+            'total_price': self.total_price,
+            'count': self.count
         }
 
 # Json 형태로 쓰기 위해 씀!
 class OrderVo():
-    user_no: int = 0
+    order_no: int = 0
     user_id: str = ''
     password: str = ''
     gender: str = ''

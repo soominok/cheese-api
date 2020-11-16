@@ -88,7 +88,7 @@ class OrderDfo:
         
         self.odf = pd.DataFrame(
             {
-                'order_no': this.user.order_no,
+                # 'order_no': this.user.order_no,
                 'user_id': this.user.user_id,
                 'password': '1',
                 'gender': this.user.user_gender,

@@ -21,15 +21,6 @@ session = Session()
 
 class OrderDao(OrderDto):
 
-    # @classmethod
-    # def bulk(cls, user_dfo):
-    #     user_dfo = OrderDfo()
-    #     dfo = user_dfo.create()
-    #     print(user_dfo.head())
-    #     session.bulk_insert_mappings(cls, dfo.to_dict(orient="records"))
-    #     session.commit()
-    #     session.close()
-
     @staticmethod
     def bulk():
         orderDfo = OrderDfo()
@@ -93,21 +84,22 @@ class OrderDao(OrderDto):
         주어진 아이디를 토대로 유저를 찾아서
         해당 정보를 리턴해준다.
         """
-        # return session.query(cls).filter(cls.user_id.like(f'{user_id}')).all()
-        return session.query(cls).filter(cls.user_id.like(f'{user_id}')).first()
+        return session.query(cls).filter(cls.user_id.like(f'{user_id}')).all()
 
-        # return session.query(OrderDto).filter(OrderDto.user_id.like(f'{user_id}')).one()
 
     # @classmethod
-    # def find_users_in_category(cls, start, end):
-    #     return session.query(cls) \
-    #         .filter(cls.user_id.in_([start, end])).all()
+    # def find_cheese_by_gender_count(cls):
+    #     return session.query(cls.gender, cls.age, cls.cheese_category, cls.cheese_name, func.count(cls))\
+    #         .group_by(cls.gender, cls.age, cls.cheese_categroy, cls.cheese_name).all()
+    #         # .filter(and_(cls.gender.like(gender))).all()
 
-    # @classmethod
-    # def find_users_by_gender_and_age(cls, gender, age_group):
-    #     return session.query(cls) \
-    #         .filter(and_(cls.gender.like(gender),
-    #         cls.age_group.like(f'{age_group}%'))).all()
+
+    @classmethod
+    def find_cheese_by_gender_count(cls):
+        return session.query(cls.gender, cls.age, cls.cheese_category, func.count(cls.gender).label('count'))\
+            .group_by(cls.gender, cls.age, cls.cheese_category).order_by(cls.gender, cls.age, func.count(cls.gender).desc()).all()
+            # .filter(and_(cls.gender.like(gender))).all()
+
 
 
     # '''
@@ -120,66 +112,6 @@ class OrderDao(OrderDto):
     # def find_users_in_category(cls, start, end):
     #     return session.query(cls)\
     #                   .filter(cls.user_id.in_([start,end])).all()
-
-
-    '''
-    SELECT *
-    FROM users
-    WHERE user_id LIKE '1' AND password LIKE '1'
-    '''
-
-    # @classmethod
-    # def login(cls, user):
-    #     """
-    #     유저 정보를 받아와, 해당 유저가 데이터베이스에 있는지 확인.
-    #     확인 후, 있으면 로그인 시켜준다.
-    #     Parameter: 유저 모델을 받아온다
-    #     return: 유저 정보를 리턴해준다.
-    #     """
-    #     print("----------------login")
-    #     sql = cls.query\
-    #         .filter(cls.user_id.like(user.user_id))\
-    #         .filter(cls.password.like(user.password))
-    #     print("login type ", type(sql))
-    #     df = pd.read_sql(sql.statement, sql.session.bind)
-    #     print(json.loads(df.to_json(orient='records')))
-    #     return json.loads(df.to_json(orient='records'))
-
-        # return session.query(cls)\
-        #     .filter(cls.user_id == user.user_id,
-        #         cls.password == user.password).one()
-
-    @classmethod
-    def login(cls, user):
-        return session.query(cls).filter(cls.user_id == user.user_id,
-            cls.password == user.password).first()
-
-
-    # '''
-    # SELECT *
-    # FROM users
-    # WHERE gender LIKE 'gender' AND name LIKE 'name%'
-    # '''
-    # # Please enter this at the top. 
-    # # from sqlalchemy import and_
-    # @classmethod
-    # def find_users_by_gender_and_name(cls, gender, name):
-    #     return session.query(cls)\
-    #                   .filter(and_(cls.gender.like(gender),
-    #                    cls.name.like(f'{name}%'))).all()
-
-    # '''
-    # SELECT *
-    # FROM users
-    # WHERE pclass LIKE '1' OR age_group LIKE '3'
-    # '''
-    # # Please enter this at the top. 
-    # # from sqlalchemy import or_
-    # @classmethod
-    # def find_users_by_gender_and_name(cls, gender, age_group):
-    #     return session.query(cls)\
-    #                   .filter(or_(cls.pclass.like(gender),
-    #                    cls.age_group.like(f'{age_group}%'))).all()
 
 
 

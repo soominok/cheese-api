@@ -93,7 +93,7 @@ class UserDao(UserDto):
 
     @classmethod
     def find_one(cls, user_id):
-        print('===================cls.user_id=====================')
+        print('===================cls.user_id=================')
         print(cls.user_id)
         print('===================user_id=====================')
         print(user_id)
@@ -133,12 +133,12 @@ class UserDao(UserDto):
     #     return session.query(cls)\
     #                   .filter(cls.user_id.in_([start,end])).all()
 
+
     @classmethod
     def find_users_by_gender_and_age(cls, gender, age_group):
         return session.query(cls) \
             .filter(and_(cls.gender.like(gender),
             cls.age_group.like(f'{age_group}%'))).all()
-
 
 
     '''
