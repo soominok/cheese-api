@@ -11,6 +11,7 @@ class Login(Resource):
 
     @staticmethod
     def post():
+        print('====== access post 요청 받음 ======')
         parser.add_argument('user_id', type=str, required=True, 
                                 help = 'This field should be a user_id')
         parser.add_argument('password', type=str, required=True,
@@ -27,10 +28,19 @@ class Login(Resource):
 
         data = UserDao.login(user)
         print(f'Login Result : {data}')
-
-        return json.dumps([data.json]), 200
-        # return data[0], 200
+        # if data[0]:
+        #     session['user'] = data[0]
+        # print(session)
+        # return json.dumps([data.json]), 200
+        return data[0], 200
 
 
     def get(self):
         return {'message': 'Login API Start !!'}
+
+    # @staticmethod
+    # def delete(user_id):
+    #     print('====== access delete 요청 받음 ======')
+    #     print(session)
+    #     session.pop('user', N)
+        

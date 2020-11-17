@@ -41,7 +41,7 @@ class CheeseDfo(object):
 
     def cheese_df(self):
         cheese_data_frame = pd.read_csv(
-            '/home/bitai/Documents/EMP_Team/EMP_Main/Ai/cheese_flask_proj/com_cheese_api/cop/itm/cheese/data/cheese_data.csv',
+            'com_cheese_api/cop/itm/cheese/data/cheese_data.csv',
             sep=','
         )
 
@@ -248,9 +248,9 @@ class CheeseDfo(object):
     #     return cheese_train, cheese_test
 
 
-if __name__ == '__main__' :
-    dfo = CheeseDfo()
-    dfo.cheese_data_refine()
+# if __name__ == '__main__' :
+#     dfo = CheeseDfo()
+#     dfo.cheese_data_refine()
 
 
 

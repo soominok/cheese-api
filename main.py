@@ -5,12 +5,15 @@ from com_cheese_api.ext.routes import initialize_routes
 
 from com_cheese_api.usr.user.model.user_dfo import UserDfo
 from com_cheese_api.usr.user.model.user_dao import UserDao
+# from com_cheese_api.usr.user.model.user_dto import UserDto
 
 from com_cheese_api.cop.ord.order.model.order_dfo import OrderDfo
 from com_cheese_api.cop.ord.order.model.order_dao import OrderDao
+# from com_cheese_api.cop.ord.order.model.order_dto import OrderDto
 
-# from com_cheese_api.cop.itm.cheese.model.cheese_dfo import CheeseDfo
+from com_cheese_api.cop.itm.cheese.model.cheese_dfo import CheeseDfo
 from com_cheese_api.cop.itm.cheese.model.cheese_dao import CheeseDao
+# from com_cheese_api.cop.itm.cheese.model.cheese_dto import cheeseDto
 
 # from com_cheese_api.cop.rev.review.model.review_dto import ReviewDto
 from com_cheese_api.cop.rev.review.model.review_dao import ReviewDao
@@ -40,6 +43,7 @@ with app.app_context():
 
     db.create_all()
 
+# ================================= User =================================
     user_count = UserDao.count()
 
     print(f'USER TABLE CNT : {user_count[0]:10}')
@@ -47,6 +51,8 @@ with app.app_context():
     print(f'===== Users Total Count is {user_count} =====')
     if user_count[0] == 0:
         UserDao.bulk()
+    else:
+        print("Users Data exists...")
 
     # user_all = UserDao.find_all()
     print(f'insert 테스트!!')
@@ -55,23 +61,51 @@ with app.app_context():
     # user_all.bulk()
 
 
-    OrderDao.bulk()
+# ================================= Order =================================
+
+    order_count = OrderDao.count()
+
+    print(f'==========Order Data Insert!!!==========')
+    print(f'===== Order Total Count is {order_count} =====')
+    if order_count[0] == 0:
+        OrderDao.bulk()
+    else:
+        print("Order data exists...")
+
+
+# ================================= Cheese =================================
+    cheese_count = CheeseDao.count()
+
+    
+    # cheese_id =
+    # cheese_find_one = CheeseDao.find_by_cheese(cheese_id)
+    # print(f'===== Cheese find one {cheese_find_one} =====')
 
     # cheese_all = CheeseDao.find_all()
     # print(f'========Cheese all {cheese_all} ==========')
 
-    # CheeseDao.bulk()
-    # print('\nbulkkkkkkkkkkkk===\n')
+    print(f'==========Cheeses Data Insert!!!==========')
+    print(f'===== Cheeses Total Count is {cheese_count} =====')
+    if cheese_count[0] == 0:
+        CheeseDao.bulk()
+    else:
+        print("Cheeses Data exists...")
+
+
+# ================================= Review =================================
+#     print(f'==========Reviews Data Insert!!!==========')
+#     # ReviewDao.bulk()
+
 
 initialize_routes(api)
 
-print("==========1946")
+print("========== main.py END ==========")
+
+
 
 # dfo = CheeseDfo()
 # cheese_df = dfo.cheese_df()
 # df = dfo.cheese_data_refine(cheese_df)
-
-
 
 # ================ CheeseDfo 테스트 ================
 # dfo = CheeseDfo()

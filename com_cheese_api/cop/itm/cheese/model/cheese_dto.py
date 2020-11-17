@@ -1,6 +1,7 @@
 from com_cheese_api.ext.db import url, db, openSession, engine
-# from com_cheese_api.util.file import FileReader
 from com_cheese_api.cmm.utl.file import FileReader
+from com_cheese_api.cop.ord.order.model.order_dto import OrderDto
+# from com_cheese_api.cop.rev.review.model.review_dto import ReviewDto
 
 from sqlalchemy import func
 from sqlalchemy import and_, or_
@@ -36,10 +37,9 @@ class CheeseDto(db.Model):
     price : int = db.Column(db.Integer)
     img : str = db.Column(db.String(255))
 
-    # dairy = db.relationship('DiaryDto', lazy='dynamic')
-    # orders = db.relationship('OrderDto', back_populates='cheese', lazy='dynamic')
-    # prices = db.relationship('PriceDto', back_populates='cheese', lazy='dynamic')
-
+    orders = db.relationship('OrderDto', back_populates='cheese', lazy='dynamic')
+    # review = db.relationship('ReviewDto', back_populates='review', lazy='dynamic')
+    
     def __init__(self, cheese_id, ranking, category, brand, name, content, texture, types, price, img): 
         self.cheese_id = cheese_id
         self.ranking = ranking
@@ -71,7 +71,7 @@ class CheeseDto(db.Model):
             'brand':self.brand,
             'name':self.name,
             'content':self.content,
-            'texture':self.types,
+            'texture':self.texture,
             'types':self.types,
             'price':self.price,
             'img':self.img

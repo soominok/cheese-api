@@ -37,21 +37,21 @@ class OrderDao(OrderDto):
 
     @classmethod
     def update(cls, user):
-        session.query(cls).filter(cls.user_no == user['user_no'])\
-                .update({cls.password: user['password'],\
-                cls.gender:user['gender'],\
-                cls.age_group:user['age_group']})
+        session.query(cls).filter(cls.order_no == user['order_no'])\
+                .update({cls.cheese_name: user['cheese_name'],\
+                cls.buy_count:user['buy_count'],\
+                cls.total_price:user['total_price']})
         session.commit()
 
     @classmethod
-    def delete(cls, user_no):
-        data = cls.query.get(user_no)
+    def delete(cls, order_no):
+        data = cls.query.get(order_no)
         db.session.delete(data)
         db.session.commit()
 
     @classmethod
     def count(cls):
-        return session.query(func.count(cls.user_no)).one()
+        return session.query(func.count(cls.order_no)).one()
 
     @classmethod
     def find_all(cls):
@@ -96,8 +96,22 @@ class OrderDao(OrderDto):
 
     @classmethod
     def find_cheese_by_gender_count(cls):
-        return session.query(cls.gender, cls.age, cls.cheese_category, func.count(cls.gender).label('count'))\
-            .group_by(cls.gender, cls.age, cls.cheese_category).order_by(cls.gender, cls.age, func.count(cls.gender).desc()).all()
+        return session.query(cls.gender, cls.cheese_category, func.count(cls.gender).label('count'))\
+            .group_by(cls.gender, cls.cheese_category).order_by(cls.gender, func.count(cls.gender).desc()).all()
+            # .filter(and_(cls.gender.like(gender))).all()
+
+    # @classmethod
+    # def find_cheese_by_gender_count(cls):
+    #     return session.query(cls.gender, cls.cheese_category, func.count(cls.gender).label('count'), \
+    #             func.rank().over(order_by = func.count(cls.gender), partition_by=cls.cheese_category).label('rank'))\
+    #         .group_by(cls.gender, cls.cheese_category).order_by(cls.gender, func.count(cls.gender).desc()).all()
+    #         # .filter(and_(cls.gender.like(gender))).all()
+
+
+    @classmethod
+    def find_cheese_by_age_count(cls):
+        return session.query(cls.age, cls.cheese_category, func.count(cls.gender).label('count'))\
+            .group_by(cls.age, cls.cheese_category).order_by(cls.age, func.count(cls.gender).desc()).all()
             # .filter(and_(cls.gender.like(gender))).all()
 
 

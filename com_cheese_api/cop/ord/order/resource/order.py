@@ -41,8 +41,8 @@ class Order(Resource):
     def post():
         print(f'[User Signup Resource Enter]')
         body = request.get_json()
-        user = UserDto(**body)
-        UserDao.save(user)
+        user = OrderDto(**body)
+        OrderDao.save(user)
         user_id = user.user_id
 
         return {'user_id': str(user_id)}, 200
@@ -58,7 +58,7 @@ class Order(Resource):
         print(user_id)
         try:
             print(f'User ID is {user_id}')
-            user = UserDao.find_by_id(user_id)
+            user = OrderDao.find_by_id(user_id)
             
             if user:
                 return jsonify([user.json])
@@ -91,9 +91,9 @@ class Order(Resource):
         args = parser.parse_args()
         print(f'User {args["user_id"]} updated')
         print(f'User {args["password"]} updated')
-        user = UserDto(args.user_id, args.password, args.gender, args.age_group,)
+        user = OrderDto(args.user_id, args.password, args.gender, args.age_group,)
         print("user created")
-        UserDao.update(user)
+        OrderDao.update(user)
         data = user.json()
         return data, 200
 
@@ -128,12 +128,12 @@ class Orders(Resource):
     @staticmethod
     def post():
         print(f'[ User Bulk Resource Enter ]')
-        UserDao.bulk()
+        OrderDao.bulk()
 
     @staticmethod
     def get():
         print(f'[ User List Resource Enter ]')
-        data = UserDao.find_all()
+        data = OrderDao.find_all()
         return jsonify([item.json for item in data])
         # return json.dumps(jsonify([item.json for item in data])), 200
 

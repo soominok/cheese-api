@@ -36,7 +36,7 @@ from collections import Counter
 class CheeseKdd(object):
 
     def __init__(self):
-        ...
+        
     def cheese_Crawling(html):
         item_list = []
         item_dict = {}

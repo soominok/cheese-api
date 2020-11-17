@@ -1,4 +1,3 @@
-# from com_cheese_api.usr.model.user_dto import UserDto
 from com_cheese_api.usr.user.model.user_dto import UserDto
 from com_cheese_api.usr.user.model.user_dfo import UserDfo
 import numpy as np
@@ -167,8 +166,15 @@ class UserDao(UserDto):
     @classmethod
     def login(cls, user):
         print("------ login ------")
-        return session.query(cls).filter(cls.user_id == user.user_id,
-            cls.password == user.password).one()
+        sql = cls.query \
+            .filter(cls.user_id.like(user.user_id))\
+                .filter(cls.password.like(user.password))
+        df = pd.read_sql(sql.statement, sql.session.bind)
+        print("------- login ------")
+        print(json.loads(df.to_json(orient='records')))
+        return json.loads(df.to_json(orient='records'))
+        # return session.query(cls).filter(cls.user_id == user.user_id,
+        #     cls.password == user.password).one()
 
 
     # '''

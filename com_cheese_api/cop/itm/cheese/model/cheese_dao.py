@@ -33,7 +33,6 @@ class CheeseDao(CheeseDto):
     #     session.commit()
     #     session.close()
 
-
     @staticmethod
     def bulk():
         print("========cheese DAO 1========")
@@ -45,6 +44,10 @@ class CheeseDao(CheeseDto):
         session.commit()
         session.close()
 
+    @classmethod
+    def count(cls):
+        return session.query(func.count(cls.cheese_id)).one()
+
     @staticmethod
     def save(cheese):
         Session = openSession()
@@ -52,21 +55,76 @@ class CheeseDao(CheeseDto):
         session.add(cheese)
         session.commit()
 
+
     @classmethod
     def find_all(cls):
-
         #cheese = session.query(CheeseVo).all()
-
         return cls.query.all()
 
+    @classmethod
+    def find_by_cheese(cls, cheese_id):
+        # rst = cls.query.filter(cls.cheese_id == cheese_id).one()
+        # print(f'find_by_cheese {rst}')
+        return session.query(cls).filter(cls.cheese_id == cheese_id).one()
+        # return session.query(func.filter(cls.cheese_id == cheese_id)).one()
+
+    # @classmethod
+    # def find_by_category(cls, category):
+    #     # return session.query(cls).filter(cls.category == category).all()
+    #     return session.query(cls).filter(cls.category.like(category)).all()
 
     @classmethod
-    def find_by_name(cls, name):
-        return cls.query.filter_by(name == name).all()
+    def find_by_category(cls, category):
+        # return session.query(cls).filter(cls.category == category).all()
+        print("================find_by_category()================")
+        return session.query(cls).filter(cls.category.like(f'%{category}%')).all()
+
+    # @classmethod
+    # def find_by_name(cls, name):
+    #     return cls.query.filter_by(name == name).all()
+
+    # @classmethod
+    # def update(cls, cheese):
+    #     session.query(cls).filter(cls.cheese_id == cheese['cheese_id'])\
+    #         .update({cls.ranking:cheese['ranking'],\
+    #             cls.category:cheese['category'],\
+    #             cls.brand:cheese['brand'],\
+    #             cls.name:cheese['name'],\
+    #             cls.content:cheese['content'],\
+    #             cls.texture:cheese['texture'],\
+    #             cls.types:cheese['types'],\
+    #             cls.price:cheese['price'],\
+    #             cls.img:cheese['img']})
+                
+    #     session.add(cheese)
+    #     session.commit()
+    #     session.close()
+    #     print('[cheese_dao.py] -> Data Update Complete!!!')
+
+    @staticmethod
+    def update(cheese):
+        session.query(CheeseDto).filter(CheeseDto.cheese_id == cheese['cheese_id'])\
+            .update({CheeseDto.ranking:cheese['ranking'],\
+                CheeseDto.category:cheese['category'],\
+                CheeseDto.brand:cheese['brand'],\
+                CheeseDto.name:cheese['name'],\
+                CheeseDto.content:cheese['content'],\
+                CheeseDto.texture:cheese['texture'],\
+                CheeseDto.types:cheese['types'],\
+                CheeseDto.price:cheese['price'],\
+                CheeseDto.img:cheese['img']})
+
+        # session.add(cheese)
+        session.commit()
+        session.close()
+        print('[cheese_dao.py] -> Data Update Complete!!!')
+
 
     @classmethod
-    def find_by_id(cls, id):
-        return cls.query.filter_by(id == id).first()
+    def delete(cls, cheese_id):
+        cheese = cls.query.get(cheese_id)
+        db.session.delete(cheese)
+        db.session.commit()
 
 
 # if __name__ == '__main__':

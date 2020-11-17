@@ -66,7 +66,8 @@ class OrderDfo:
         # this = OrderDfo.user_age_nominal(this)
         print(f'######## age 전처리 체크 ##########')
         print(this.user.head(10))
-        this = OrderDfo.cheese_code_ordinal(this)
+        # this = OrderDfo.cheese_code_numeric(this)
+        # this = OrderDfo.cheese_code_ordinal(this)
         this = OrderDfo.buy_count_numeric(this)
         # this = OrderDfo.cheese_category_nominal(this)
         # this = OrderDfo.cheese_texture_nominal(this)
@@ -90,14 +91,14 @@ class OrderDfo:
             {
                 # 'order_no': this.user.order_no,
                 'user_id': this.user.user_id,
-                'password': '1',
-                'gender': this.user.user_gender,
+                'cheese_id': this.user.cheese_id,
+                # 'gender': this.user.user_gender,
                 # 'age_group': this.user.age_group,
-                'age': this.user.user_age,
-                'cheese_name': this.user.cheese_name,
-                'cheese_texture': this.user.cheese_texture,
-                'cheese_category': this.user.cheese_category,
-                'buy_count': this.user.buy_count,
+                # 'age': this.user.user_age,
+                # 'cheese_name': this.user.cheese_name,
+                # 'cheese_texture': this.user.cheese_texture,
+                # 'cheese_category': this.user.cheese_category,
+                'buy_count' : this.user.buy_count,
                 'total_price': this.user.total_price
 
             }
@@ -192,8 +193,12 @@ class OrderDfo:
         return this
 
     @staticmethod
-    def user_price_numeric(this) -> object:
+    def cheese_code_numeric(this) -> object:
         this.user['cheese_id'] = this.user['cheese_id'].str.replace('p','')
+        return this
+
+    @staticmethod
+    def user_price_numeric(this) -> object:
         this.user['cheese_one_price'] = this.user['cheese_one_price'].str.replace(',', '')
         this.user['cheese_one_price'] = this.user['cheese_one_price'].str.replace('원', '')
         this.user = this.user.astype({'cheese_one_price': int})

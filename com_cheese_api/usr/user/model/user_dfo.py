@@ -36,7 +36,7 @@ class UserDfo:
     def __init__(self):
         self.fileReader = FileReader()
         # self.data = os.path.join(os.path.abspath(os.path.dirname(__file__))+'/m_data')
-        self.data = os.path.join('com_cheese_api/cop/ord/order/data')
+        self.data = os.path.join('com_cheese_api/usr/user/data')
         self.odf = None
 
     def new(self):

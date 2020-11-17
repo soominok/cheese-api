@@ -8,7 +8,7 @@ from flask_restful import Resource, reqparse
 from flask import jsonify
 import json
 
-class OrderBest(Resource):
+class GenderBest(Resource):
         @staticmethod
         def get():
                 print("SEARCH 진입")
@@ -18,10 +18,10 @@ class OrderBest(Resource):
                 # print(f'치즈 이름: {cheese_name}')
                 best = OrderDao.find_cheese_by_gender_count()
 
-                print(f'Best List : {best}')
+                print(f'Gender Best List : {best}')
                 print(type(best))
 
-                print(f'Best json : {jsonify(best)}')
+                print(f'Gender Best json : {jsonify(best)}')
                 # itemList = []
                 # for item in best:
                 #         print(f'for문 결과: ', item)
@@ -33,3 +33,53 @@ class OrderBest(Resource):
                 # return jsonify([item.json for item in best])
                 return jsonify(best)
                 
+
+class AgeBest(Resource):
+        @staticmethod
+        def get():
+                print("SEARCH 진입")
+                # print(f'성별: {gender}')
+                # print(f'나이: {age}')
+                # print(f'치즈 카테고리: {cheese_category}')
+                # print(f'치즈 이름: {cheese_name}')
+                best = OrderDao.find_cheese_by_age_count()
+
+                print(f'Age Best List : {best}')
+                print(type(best))
+
+                print(f'Age Best json : {jsonify(best)}')
+                # itemList = []
+                # for item in best:
+                #         print(f'for문 결과: ', item)
+                #         itemList.append(item)
+                # print(f'Best List : {itemList}')
+                # print(type(itemList))
+                        
+                
+                # return jsonify([item.json for item in best])
+                return jsonify(best)
+
+# class OrderBest(Resource):
+#         @staticmethod
+#         def get():
+#                 print("SEARCH 진입")
+#                 # print(f'성별: {gender}')
+#                 # print(f'나이: {age}')
+#                 # print(f'치즈 카테고리: {cheese_category}')
+#                 # print(f'치즈 이름: {cheese_name}')
+#                 best = OrderDao.find_cheese_by_gender_count()
+
+#                 print(f'Best List : {best}')
+#                 print(type(best))
+
+#                 print(f'Best json : {jsonify(best)}')
+#                 # itemList = []
+#                 # for item in best:
+#                 #         print(f'for문 결과: ', item)
+#                 #         itemList.append(item)
+#                 # print(f'Best List : {itemList}')
+#                 # print(type(itemList))
+                        
+                
+#                 # return jsonify([item.json for item in best])
+#                 return jsonify(best)

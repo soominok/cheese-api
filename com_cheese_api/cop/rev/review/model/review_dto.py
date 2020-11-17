@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse, fields, marshal_with
 # from com_cheese_api.user import UserDto
 from com_cheese_api.ext.db import db, openSession
-from com_cheese_api.usr.user.model.user_dto import UserDto
+# from com_cheese_api.usr.user.model.user_dto import UserDto
 from com_cheese_api.cop.itm.cheese.model.cheese_dto import CheeseDto
 
 # ==============================================================
@@ -29,9 +29,9 @@ class ReviewDto(db.Model):
     review_detail: str = db.Column(db.String(500))
 
     # FK
-    user_id = db.Column(db.String(10), db.ForeignKey(UserDto.user_id))
+    # user_id = db.Column(db.String(10), db.ForeignKey(UserDto.user_id))
     # user_no = db.Column(db.Integer, db.ForeignKey(UserDto.user_no))
-    cheese_id = db.Column(db.String(30), db.ForeignKey(CheeseDto.cheese_id))
+    # cheese_id = db.Column(db.String(30), db.ForeignKey(CheeseDto.cheese_id))
 
 
     # 관계 설정
