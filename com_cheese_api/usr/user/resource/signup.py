@@ -19,8 +19,8 @@ class SignUp(Resource):
                                         help='This field should be a name') 
         parser.add_argument('gender', type=str, required=True,
                                         help='This field should be a gender')
-        parser.add_argument('age', type=int, required=True,
-                                        help='This field should be a age')
+        # parser.add_argument('age', type=int, required=True,
+        #                                 help='This field should be a age')
         parser.add_argument('phone', type=str, required=True,
                                         help='This field should be a phone')
         parser.add_argument('email', type=str, required=True,
@@ -32,7 +32,7 @@ class SignUp(Resource):
         print('아이디: ', user.user_id)
         print('비밀번호: ', user.password)
         print('이름: ', user.name)
-        print('성별: ', user.gender)
+        # print('성별: ', user.gender)
         print('나이: ', user.age)
         print('핸드폰 번호: ', user.phone)
         print('이메일: ', user.email)

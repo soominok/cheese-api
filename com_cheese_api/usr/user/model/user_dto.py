@@ -4,7 +4,7 @@ import pandas as pd
 # from com_cheese_api.cmm.utl.file import FileReader
 from pathlib import Path
 from com_cheese_api.ext.db import url, db, openSession, engine
-from com_cheese_api.cop.ord.order.model.order_dto import OrderDto
+# from com_cheese_api.cop.ord.order.model.order_dto import OrderDto
 # from com_cheese_api.cop.rev.review.model.review_dto import ReviewDto
 
 # from sqlalchemy import func
@@ -27,7 +27,7 @@ class UserDto(db.Model):
     phone: str = db.Column(db.String(20))
     email: str = db.Column(db.String(100))
 
-    orders = db.relationship('OrderDto', back_populates='user', lazy='dynamic')
+    # orders = db.relationship('OrderDto', back_populates='user', lazy='dynamic')
     # cheeses = db.relationship('CheeseDto', back_populates='users', lazy='dynamic')
     # reviews = db.relationship('ReviewDto', back_populates='user', lazy='dynamic')
     
