@@ -2,24 +2,29 @@ from flask_restful import Resource, reqparse
 from com_cheese_api.usr.user.model.user_dao import UserDao 
 from com_cheese_api.usr.user.model.user_dto import UserVo
 import json
-from flask import jsonify
+from flask import jsonify, request
 
 parser = reqparse.RequestParser()
 
 class Login(Resource):
     print(f'[ User Login Resource Enter ]')
 
-    @staticmethod
-    def post():
+    # @staticmethod
+    def post(self):
         print('====== access post 요청 받음 ======')
         parser.add_argument('user_id', type=str, required=True, 
                                 help = 'This field should be a user_id')
         parser.add_argument('password', type=str, required=True,
                                 help = 'This field should be a password')
+        print(f'*********> ')
         args = parser.parse_args()
-        print(args)
+        print(f'===> ', args)
         user = UserVo()
         # print(f'[ ID ] {args.user_id} \n [ Password ] {args.password}')
+        user.user_id = args.user_id
+        user.password = args.password
+
+        user = UserVo()
         user.user_id = args.user_id
         user.password = args.password
 
