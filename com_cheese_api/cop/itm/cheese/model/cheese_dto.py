@@ -37,7 +37,7 @@ class CheeseDto(db.Model):
     price : int = db.Column(db.Integer)
     img : str = db.Column(db.String(255))
 
-    orders = db.relationship('OrderDto', back_populates='cheese', lazy='dynamic')
+    # orders = db.relationship('OrderDto', back_populates='cheese', lazy='dynamic')
     # review = db.relationship('ReviewDto', back_populates='review', lazy='dynamic')
     
     def __init__(self, cheese_id, ranking, category, brand, name, content, texture, types, price, img): 

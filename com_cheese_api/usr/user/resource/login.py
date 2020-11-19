@@ -31,7 +31,8 @@ class Login(Resource):
         # if data[0]:
         #     session['user'] = data[0]
         # print(session)
-        # return json.dumps([data.json]), 200
+
+        # return json.dumps(data.json[0]), 200
         return data[0], 200
 
 
