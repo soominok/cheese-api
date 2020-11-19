@@ -104,7 +104,7 @@ class Cheeses(Resource):
         # cheese = CheeseDao.query.order_by(CheeseDao.ranking).all()        
         # return jsonify([item.json for item in cheese])
 
-print("=================== Cheeses Api END ===================")
+# print("=================== Cheeses Api END ===================")
 
 
 # ==============================================================
@@ -231,7 +231,7 @@ class Cheese(Resource):
         except Exception as e:
             return {'message': 'NOT FOUND DATA'}, 404
 
-print("=================== Cheese Api END ===================")
+# print("=================== Cheese Api END ===================")
 
 
 class CheeseSearch(Resource):

@@ -23,7 +23,7 @@ class UserDto(db.Model):
     password: str = db.Column(db.String(5))
     name: str = db.Column(db.String(5))
     gender: str = db.Column(db.String(5))
-    age: int = db.Column(db.Integer)
+    age: str = db.Column(db.String(5))
     phone: str = db.Column(db.String(20))
     email: str = db.Column(db.String(100))
 
@@ -73,7 +73,7 @@ class UserVo():
     password: str = ''
     name: str = ''
     gender: str = ''
-    age: int = 0
+    age: str = ''
     phone: str = ''
     email: str = ''
 

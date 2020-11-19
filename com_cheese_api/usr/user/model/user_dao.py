@@ -62,6 +62,7 @@ class UserDao(UserDto):
         새로운 유저를 parameter로 가져온다.
         새로운 유저를 데이터베이스 안에 넣는다.
         """
+        print("------ sign up ------")
         db.session.add(user)
         db.session.commit()
 
@@ -169,10 +170,13 @@ class UserDao(UserDto):
         sql = cls.query \
             .filter(cls.user_id.like(user.user_id))\
                 .filter(cls.password.like(user.password))
+        # sql = cls.query \
+        #     .filter(cls.user_id.like(user.user_id))\
+        #         .filter(cls.password.like(user.password))
         df = pd.read_sql(sql.statement, sql.session.bind)
-        print("------- login ------")
         print(json.loads(df.to_json(orient='records')))
         return json.loads(df.to_json(orient='records'))
+        # return json.dumps(df.to_json(orient='records'))
         # return session.query(cls).filter(cls.user_id == user.user_id,
         #     cls.password == user.password).one()
 
