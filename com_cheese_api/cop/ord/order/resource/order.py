@@ -61,7 +61,8 @@ class Order(Resource):
             user = OrderDao.find_by_id(user_id)
             
             if user:
-                return jsonify([user.json])
+                # return jsonify([user.json])
+                return jsonify([item.json for item in user])
         except Exception as e:
             print(e)
             return {'message': 'User not found'}, 404

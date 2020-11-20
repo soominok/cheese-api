@@ -89,18 +89,21 @@ class OrderDfo:
         
         self.odf = pd.DataFrame(
             {
-                # 'order_no': this.user.order_no,
+                # # 'order_no': this.user.order_no,
+                # 'user_id': this.user.user_id,
+                # 'cheese_id': this.user.cheese_id,
+                # 'buy_count' : this.user.buy_count,
+                # 'total_price': this.user.total_price
+
                 'user_id': this.user.user_id,
                 'cheese_id': this.user.cheese_id,
-                # 'gender': this.user.user_gender,
-                # 'age_group': this.user.age_group,
-                # 'age': this.user.user_age,
-                # 'cheese_name': this.user.cheese_name,
-                # 'cheese_texture': this.user.cheese_texture,
-                # 'cheese_category': this.user.cheese_category,
+                'gender': this.user.user_gender,
+                'age': this.user.user_age,
+                'cheese_name': this.user.cheese_name,
+                'cheese_texture': this.user.cheese_texture,
+                'cheese_category': this.user.cheese_category,
                 'buy_count' : this.user.buy_count,
                 'total_price': this.user.total_price
-
             }
         )
 

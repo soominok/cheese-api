@@ -48,14 +48,13 @@ class Login(Resource):
         #     session['user'] = data[0]
         # print(session)
 
-<<<<<<< HEAD
         # return json.dumps(data.json[0]), 200
-=======
+
         # return json.dumps([data.json]), 200
         
         # return json.dunps(data[0]), 200
         # return data.json()
->>>>>>> 51881d82d9f33e106466f8f6232fbc1656682b9c
+
         return data[0], 200
 
     def get(self):
