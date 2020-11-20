@@ -91,28 +91,35 @@ class User(Resource):
         parameter: 유저 아이디를 받아온다
         return: 새로운 유저 데이터를 리턴 한다
         """
-        parser = reqparse.RequestParser()  # only allow price changes, no name changes allowed
-        parser.add_argument('user_id', type=str, required=True,
-                                                help='This field should be a user_id')
-        parser.add_argument('password', type=str, required=True,
-                                                help='This field should be a password')
-        parser.add_argument('name', type=str, required=True,
-                                                help='This field should be a name')            
-        parser.add_argument('gender', type=str, required=True,
-                                                help='This field should be a gender')
-        parser.add_argument('age', type=str, required=True,
-                                                help='This field should be a age')
+        print(f'[User Put Resource Enter]')        
+        parser = reqparse.RequestParser() 
+        parser.add_argument('user_id', type=str, required=True, help='This is user_id field')
+        parser.add_argument('password', type=str, required=True, help='This is password field')
+        parser.add_argument('name', type=str, required=True, help='This is name field')
+        parser.add_argument('gender', type=str, required=True, help='This is gender field')
+        parser.add_argument('age', type=str, required=True, help='This is age field')
+        parser.add_argument('phone')
+        parser.add_argument('email')
 
         print("argument added")
-        
+
         args = parser.parse_args()
         print(f'User {args["user_id"]} updated')
         print(f'User {args["password"]} updated')
-        user = UserDto(args.user_id, args.password, args.name, args.gender, args.age, args.phone, args.email)
-        print("user created")
-        UserDao.update(user)
-        data = user.json()
-        return data, 200
+
+        user = UserDto(args['user_id'],\
+                         args['password'],\
+                         args['name'],\
+                         args['gender'],\
+                         args['age'],\
+                         args['phone'],\
+                         args['email'])
+
+        print("User created")
+        UserDao.update(args)
+        # data = user.json()
+        
+        return args, 200
 
     @staticmethod
     def delete(user_id: str):
@@ -124,6 +131,7 @@ class User(Resource):
         # print(f'User {id} Deleted')
         print(f'[ User Delete Resource Enter ]')
         args = parser.parse_args()
+        print(args)
         UserDao.delete(user_id)
         # print(f'User {args["user_id"]} deleted')
         return {'code': 0, 'message': 'DELETE SUCCESS'}, 200

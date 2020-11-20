@@ -110,7 +110,7 @@ class UserDao(UserDto):
         주어진 아이디를 토대로 유저를 찾아서
         해당 정보를 리턴해준다.
         """
-        return session.query(cls).filter(cls.user_id.like(f'{user_id}')).one()
+        return session.query(cls).filter(cls.user_id.like(f'{user_id}')).first()
 
         # return session.query(UserDto).filter(UserDto.user_id.like(f'{user_id}')).one()
 
