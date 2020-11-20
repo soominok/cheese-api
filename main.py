@@ -46,16 +46,16 @@ with app.app_context():
 # ================================= User =================================
     user_count = UserDao.count()
 
-    print(f'USER TABLE CNT : {user_count[0]:10}')
+    # print(f'USER TABLE CNT : {user_count[0]:10}')
 
-    print(f'===== Users Total Count is {user_count} =====')
+    # print(f'===== Users Total Count is {user_count} =====')
     if user_count[0] == 0:
         UserDao.bulk()
     else:
         print("Users Data exists...")
 
     # user_all = UserDao.find_all()
-    print(f'insert 테스트!!')
+    # print(f'insert 테스트!!')
     # print(f'===== Users Total Count is {user_all} =====')
     # UserDao.bulk()
     # user_all.bulk()
@@ -65,8 +65,8 @@ with app.app_context():
 
     order_count = OrderDao.count()
 
-    print(f'==========Order Data Insert!!!==========')
-    print(f'===== Order Total Count is {order_count} =====')
+    # print(f'==========Order Data Insert!!!==========')
+    # print(f'===== Order Total Count is {order_count} =====')
     if order_count[0] == 0:
         OrderDao.bulk()
     else:
@@ -84,8 +84,8 @@ with app.app_context():
     # cheese_all = CheeseDao.find_all()
     # print(f'========Cheese all {cheese_all} ==========')
 
-    print(f'==========Cheeses Data Insert!!!==========')
-    print(f'===== Cheeses Total Count is {cheese_count} =====')
+    # print(f'==========Cheeses Data Insert!!!==========')
+    # print(f'===== Cheeses Total Count is {cheese_count} =====')
     if cheese_count[0] == 0:
         CheeseDao.bulk()
     else:
@@ -99,7 +99,7 @@ with app.app_context():
 
 initialize_routes(api)
 
-print("========== main.py END ==========")
+# print("========== main.py END ==========")
 
 
 

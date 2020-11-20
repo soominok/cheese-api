@@ -4,7 +4,7 @@ import pandas as pd
 # from com_cheese_api.cmm.utl.file import FileReader
 from pathlib import Path
 from com_cheese_api.ext.db import url, db, openSession, engine
-from com_cheese_api.cop.ord.order.model.order_dto import OrderDto
+# from com_cheese_api.cop.ord.order.model.order_dto import OrderDto
 # from com_cheese_api.cop.rev.review.model.review_dto import ReviewDto
 
 # from sqlalchemy import func
@@ -23,7 +23,7 @@ class UserDto(db.Model):
     password: str = db.Column(db.String(5))
     name: str = db.Column(db.String(5))
     gender: str = db.Column(db.String(5))
-    age: int = db.Column(db.Integer)
+    age: str = db.Column(db.String(5))
     phone: str = db.Column(db.String(20))
     email: str = db.Column(db.String(100))
 
@@ -73,7 +73,7 @@ class UserVo():
     password: str = ''
     name: str = ''
     gender: str = ''
-    age: int = 0
+    age: str = ''
     phone: str = ''
     email: str = ''
 

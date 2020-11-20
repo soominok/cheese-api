@@ -92,6 +92,11 @@ class OrderVo():
 #     order_no: int = db.Column(db.Integer, primary_key= True, autoincrement=True, index = True)
 #     user_id: str = db.Column(db.String(20), ForeignKey('users.user_id'))
 #     cheese_id: str = db.Column(db.String(20), ForeignKey('cheeses.cheese_id'))
+<<<<<<< HEAD
+=======
+#     # user_id: str = db.Column(db.String(20))
+#     # cheese_id: str = db.Column(db.String(20))
+>>>>>>> 51881d82d9f33e106466f8f6232fbc1656682b9c
 #     buy_count: int = db.Column(db.Integer)
 #     total_price: int = db.Column(db.Integer)
 

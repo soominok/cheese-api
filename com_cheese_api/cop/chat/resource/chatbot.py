@@ -5,14 +5,19 @@ import json
 
 
 class Chatbot(Resource):
+    # @staticmethod
+    # def post():
+    #     print("들어옴")
+    #     ai = CheeseAi()
+    #     args = request.get_json()
+    #     print(args)
+    #     args = [args[i]['value'] for i in args.keys()]
+    #     print(args)
+    #     name = ai.train_actors(args)
+    #     print(name)
+    #     return name
+
     @staticmethod
-    def post():
-        print("들어옴")
-        ai = CheeseAi()
-        args = request.get_json()
-        print(args)
-        args = [args[i]['value'] for i in args.keys()]
-        print(args)
-        name = ai.train_actors(args)
-        print(name)
-        return name
+    def load_model():
+        print('=== load_model ===')
+        

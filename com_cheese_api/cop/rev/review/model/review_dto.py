@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse, fields, marshal_with
 # from com_cheese_api.user import UserDto
 from com_cheese_api.ext.db import db, openSession
 # from com_cheese_api.usr.user.model.user_dto import UserDto
-from com_cheese_api.cop.itm.cheese.model.cheese_dto import CheeseDto
+# from com_cheese_api.cop.itm.cheese.model.cheese_dto import CheeseDto
 
 # ==============================================================
 # ====================                     =====================
