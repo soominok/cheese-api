@@ -14,7 +14,10 @@ from com_cheese_api.cop.ord.order.resource.best import GenderBest, AgeBest
 
 from com_cheese_api.cop.rev.review.model.review_dto import ReviewVo
 from com_cheese_api.cop.rev.review.resource.review import ReviewAPI, ReviewsAPI
+
 from com_cheese_api.cop.itm.cheese.resource.cheese import Cheeses
+
+from com_cheese_api.cop.chat.chatbot.resource.chatbot import Chatbot
 
 ############################## HOME ##############################
 home = Blueprint('home', __name__, url_prefix='/api')
@@ -61,7 +64,13 @@ api = Api(age_best)
 
 
 ############################## CHATBOT ##############################
-# chatbot = Blueprint('chatbot', __name__, url_prefix='/api/chatbot')
+chatbot = Blueprint('chatbot', __name__, url_prefix='/api/chatbot/<user_id>')
+
+api = Api(chatbot)
+
+
+############################## RECOMMEND ##############################
+# recommend = Blueprint('recommend', __name__, url_prefix='/api/recommend')
 
 # api = Api(chatbot)
 
@@ -92,6 +101,11 @@ def initialize_routes(api):
 
 ############################## CHEESE ##############################    
     # api.add_resource(Cheeses, '/api/cheeses')
+
+
+############################## CHATBOT ############################## 
+    api.add_resource(Chatbot, '/api/chatbot')
+
 
 
 
