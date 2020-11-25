@@ -63,49 +63,6 @@ cheese_fields = {
     'img': fields.String
 }
 
-# ==============================================================
-# ====================                     =====================
-# ====================      Cheeses        =====================
-# ====================                     =====================
-# ==============================================================
-
-parser = reqparse.RequestParser()
-
-class Cheeses(Resource):
-
-    def __init__(self):
-        self.parser = reqparse.RequestParser()
-
-    @marshal_with(cheese_fields)
-    def post(self):
-        print(f'[========Cheeses POST!!!(bulk)========]')
-        CheeseDao.bulk()
-        # try:
-        #     CheeseDao.save(cheese)
-        #     return {'code': 0, 'message' : 'SUCCESS'}, 200
-        # except:
-        #     return {'message': 'cheese insert error!!'}, 500
-
-    # cheese find_all
-    @staticmethod
-    def get():
-
-        print("=================== Cheeses GET() HEAD ===================\n\n")
-        cheese = CheeseDao.query.order_by(CheeseDao.ranking).all()
-        print("=================== Cheeses GET() END ===================\n\n")
-
-        return jsonify([item.json for item in cheese])
-
-        # 1차 flask -> react 전송 json 데이터, 정렬 안됨
-        # cheese = CheeseDao.find_all()
-        # return jsonify([item.json for item in cheese])
-
-        # 2차 rank로 정렬한 json 데이터 만들기, 완성!
-        # cheese = CheeseDao.query.order_by(CheeseDao.ranking).all()        
-        # return jsonify([item.json for item in cheese])
-
-# print("=================== Cheeses Api END ===================")
-
 
 # ==============================================================
 # ====================                     =====================
@@ -149,7 +106,6 @@ class Cheese(Resource):
         except Exception as e:
             print('error', e)
             return {'message': 'Not use find_by_cheese()'}, 404
-
 
     @staticmethod
     def put():
@@ -196,7 +152,6 @@ class Cheese(Resource):
         except:
             return {'message': 'update fail!!'}, 500
 
-
         # if args.ranking == cheese.ranking and\
         #     args.category == cheese.category and\
         #     args.brand == cheese.brand and\
@@ -214,7 +169,6 @@ class Cheese(Resource):
         #     print(f'Cheese Update Fail!!')
         #     return {'message': 'Cheese not found'}, 404
 
-
     @staticmethod
     def delete():
         print("=================== Cheese DELETE() HEAD ===================\n\n")
@@ -231,15 +185,81 @@ class Cheese(Resource):
         except Exception as e:
             return {'message': 'NOT FOUND DATA'}, 404
 
-# print("=================== Cheese Api END ===================")
+print("=================== Cheese Api END ===================")
+
+
+
+# ==============================================================
+# ====================                     =====================
+# ====================      Cheeses        =====================
+# ====================                     =====================
+# ==============================================================
+
+parser = reqparse.RequestParser()
+
+class Cheeses(Resource):
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+
+    @marshal_with(cheese_fields)
+    def post(self):
+        print(f'[========Cheeses POST!!!(bulk)========]')
+
+        cheese_count = CheeseDao.count()
+
+        if cheese_count[0] == 0:
+            CheeseDao.bulk()
+        else:
+            print("Cheeses Data exists...")
+        # try:
+        #     CheeseDao.save(cheese)
+        #     return {'code': 0, 'message' : 'SUCCESS'}, 200
+        # except:
+        #     return {'message': 'cheese insert error!!'}, 500
+
+    # cheese find_all
+    @staticmethod
+    def get():
+
+        print("=================== Cheeses GET() HEAD ===================\n\n")
+        cheese = CheeseDao.query.order_by(CheeseDao.ranking).all()
+        print("=================== Cheeses GET() END ===================\n\n")
+
+        return jsonify([item.json for item in cheese])
+
+        # 1차 flask -> react 전송 json 데이터, 정렬 안됨
+        # cheese = CheeseDao.find_all()
+        # return jsonify([item.json for item in cheese])
+
+        # 2차 rank로 정렬한 json 데이터 만들기, 완성!
+        # cheese = CheeseDao.query.order_by(CheeseDao.ranking).all()        
+        # return jsonify([item.json for item in cheese])
+
+print("=================== Cheeses Api END ===================")
 
 
 class CheeseSearch(Resource):
 
     # find_by_category
+    @staticmethod
+    def get(category):
+        print("=================== Cheese GET() HEAD ===================\n\n")
+        print(f'=========== 2222{category}')
+        category = CheeseDao.find_by_category(category)
+        print(f'========category\n {category}')
+
+        category_list = []
+        print(f'========List\n {category_list}')
+
+        for item in category:
+            category_list.append(item.json)
+        print(f'=========Category List\n {category_list}')
+        return jsonify(category_list) 
+
+    # find_by_category_2
     # @staticmethod
     # def get(category: str):
-    #     print("=================== Cheese GET() HEAD ===================\n\n")
     #     try:
     #         parser.add_argument('category')
     #         args = parser.parse_args()
@@ -261,20 +281,6 @@ class CheeseSearch(Resource):
     #         print('error', e)
     #         return {'message': 'Not use find_by_category()'}, 404
     
-    # find_by_category
-    @staticmethod
-    def get(category):
-        print(f'=========== 2222{category}')
-        category = CheeseDao.find_by_category(category)
-        print(f'========category\n {category}')
-
-        category_list = []
-        print(f'========List\n {category_list}')
-
-        for item in category:
-            category_list.append(item.json)
-        print(f'=========Category List\n {category_list}')
-        return jsonify(category_list) 
 
 
 # class CheeseWordCloud():

@@ -16,24 +16,42 @@ class ReviewDfo(object):
         self.fileReader = FileReader()
         self.data = os.path.join(os.path.abspath(os.path.dirname(__file__))+'/data')
         self.odf = None
+        # self.review_data_frame = None
 
     def review_df(self):
         review_data_frame = pd.read_csv(
-            '/home/bitai/Documents/EMP_Team/EMP_Main/Ai/cheese_flask_proj/data_set/cheese2pic_real_part10.csv',
+            'com_cheese_api/cop/rev/review/data/cheese_review_for_analysis.csv',
             sep=','
         )
-
+        
         return review_data_frame
 
 
+    def review_df_refine(self, review_data_frame):
 
-    def data_refine(self, review_data_frame):
-
-        print(f'[리뷰 데이터 행과 열 확인] {review_data_frame.shape}')
-        print(f'[리뷰 데이터 타입 확인] {review_data_frame.dtypes}')
+        print(f'[리뷰 데이터 행과 열 확인]\n{review_data_frame.shape}')
+        print(f'[리뷰 데이터 타입 확인]\n{review_data_frame.dtypes}')
 
         df = pd.DataFrame(review_data_frame)
 
+        # review_title 컬럼 정제
+        # '[' 제거
+        split = df['review_title'].str.split("[")
+        df['review_title'] = split.str.get(1)
+        split
+
+        # ']' 제거
+        split = df['review_title'].str.split("]")
+        df['review_title'] = split.str.get(0)
+        split
+
+        # "'" 제거
+        split = df['review_title'].str.split("'")
+        df['review_title'] = split.str.get(1)
+        split
+
+
+        # review_views 컬럼 정제
         # '[' 제거
         split = df['review_views'].str.split("[")
         df['review_views'] = split.str.get(1)
@@ -49,16 +67,43 @@ class ReviewDfo(object):
         df['review_views'] = split.str.get(1)
         split
 
-        # "\n" 제거
+
+        # review_date 컬럼 정제
+        # '[' 제거
+        split = df['review_date'].str.split("[")
+        df['review_date'] = split.str.get(1)
+        split
+
+        # ']' 제거
+        split = df['review_date'].str.split("]")
+        df['review_date'] = split.str.get(0)
+        split
+
+        # "'" 제거
+        split = df['review_date'].str.split("'")
+        df['review_date'] = split.str.get(1)
+        split
+
+
+        # review_detail 컬럼 정제
+        # "\n" 제거(review_detail)
         split = df['review_detail'].str.split("\n")
         df['review_detail'] = split.str.get(1)
         split
 
-        # 결측값 제거 필요
+        # bulk 진행 시 Unknown column 'nan' in 'field list' 오류 발생
+        # 컬럼 속성값이 nan인 경우 발생, 결측값이 있는 행을 제거 후 
+        # DB inset를 하면 된다.
+
+        # 결측값 확인 및 제거
+        print(f'\n========= 결측값 확인 !! =========')
+        print(df.isnull().any())
+        # 결측값이 있는 행 제거
+        df.dropna(axis=0, how='any', inplace=True)
 
         # pandas로 가공한 데이터 csv 파일로 다시 저장하기
-        # df.to_csv('cheese_review_panda.csv')
-        
+        # df.to_csv('cheese_review_panda1118_2.csv')
+        print(f'\n========= 리뷰 df 출력 !! =========\n{df}')
         return df
 
 

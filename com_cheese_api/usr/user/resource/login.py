@@ -7,17 +7,12 @@ from flask import jsonify, request
 
 
 class Login(Resource):
-    # print(f'[ User Login Resource Enter ]')
+
     @staticmethod
     def post():
         print('====== access post 요청 받음 ======')
         parser = reqparse.RequestParser()
         print(f'parser ===> {parser}')
-
-        # parser.add_argument('user_id', type=str, required=True, 
-        #                         help = 'This field should be a user_id')
-        # parser.add_argument('password', type=str, required=True,
-        #                         help = 'This field should be a password')
 
         parser.add_argument('user_id')
         parser.add_argument('password')
@@ -38,23 +33,7 @@ class Login(Resource):
         user.user_id = args.user_id
         user.password = args.password
 
-        # print('아이디: ', user.user_id)
-        # print('비밀번호: ', user.password)
-
         data = UserDao.login(user)
-        # print(f'Login Result : {data}')
-
-        # if data[0]:
-        #     session['user'] = data[0]
-        # print(session)
-
-        # return json.dumps(data.json[0]), 200
-
-        # return json.dumps([data.json]), 200
-        
-        # return json.dunps(data[0]), 200
-        # return data.json()
-
         return data[0], 200
 
     def get(self):

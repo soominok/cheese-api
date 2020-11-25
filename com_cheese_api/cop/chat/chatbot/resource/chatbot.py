@@ -51,23 +51,23 @@ class Chatbot(Resource):
 
         return {'message': 'SUCCESS', 'chatbot_id': str(chatbot_id)}, 200
 
-    @staticmethod
-    def get(user_id: str):
-        """
-        유저 아이디를 받아와 해당 유저 객채를 리턴한다
-        Parameter: User ID 를 받아온다
-        return: 해당 아이디 유저 객체
-        """
-        print('===========user_id=============')
-        print(user_id)
-        try:
-            print(f'User ID is {user_id}')
-            chatbot = ChatbotDao.find_by_id(user_id)
+    # @staticmethod
+    # def get(user_id: str):
+    #     """
+    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
+    #     Parameter: User ID 를 받아온다
+    #     return: 해당 아이디 유저 객체
+    #     """
+    #     print('===========user_id=============')
+    #     print(user_id)
+    #     try:
+    #         print(f'User ID is {user_id}')
+    #         chatbot = ChatbotDao.find_by_id(user_id)
             
-            if chatbot:
-                return jsonify([chatbot.json])
-        except Exception as e:
-            print(e)
-            return {'message': 'User not found'}, 404
+    #         if chatbot:
+    #             return jsonify([chatbot.json])
+    #     except Exception as e:
+    #         print(e)
+    #         return {'message': 'User not found'}, 404
 
         

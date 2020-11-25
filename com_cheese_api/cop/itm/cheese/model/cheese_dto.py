@@ -1,22 +1,13 @@
 from com_cheese_api.ext.db import url, db, openSession, engine
-from com_cheese_api.cmm.utl.file import FileReader
-# from com_cheese_api.cop.ord.order.model.order_dto import OrderDto
-# from com_cheese_api.cop.rev.review.model.review_dto import ReviewDto
+# from com_cheese_api.util.file import FileReader
+# from com_cheese_api.cmm.utl.file import FileReader
 
-from sqlalchemy import func
-from sqlalchemy import and_, or_
+# from flask import Response, jsonify
+# from flask_restful import Resource, reqparse
 
-from flask import request
-from flask import Response, jsonify
-from flask_restful import Resource, reqparse
-
-import pandas as pd
-import numpy as np
 import json
-import os
-import sys
-from typing import List
-from pathlib import Path
+# from typing import List
+# from pathlib import Path
 
 
 class CheeseDto(db.Model):
@@ -27,19 +18,20 @@ class CheeseDto(db.Model):
     # cname으로 하면 DB에 NULL 값이 들어감
     
     cheese_id : str = db.Column(db.String(30), primary_key=True, index=True)
+    name : str = db.Column(db.String(30), primary_key=True)
     ranking : int = db.Column(db.Integer)
     category: str = db.Column(db.String(30))
     brand : str = db.Column(db.String(30))
-    name : str = db.Column(db.String(30))
     content : str = db.Column(db.String(100))
     texture : str = db.Column(db.String(30))
     types : str = db.Column(db.String(30))
     price : int = db.Column(db.Integer)
     img : str = db.Column(db.String(255))
 
+    # diary = db.relationship('DiaryDto', lazy='dynamic')
     # orders = db.relationship('OrderDto', back_populates='cheese', lazy='dynamic')
-    # review = db.relationship('ReviewDto', back_populates='review', lazy='dynamic')
-    
+    # prices = db.relationship('PriceDto', back_populates='cheese', lazy='dynamic')
+
     def __init__(self, cheese_id, ranking, category, brand, name, content, texture, types, price, img): 
         self.cheese_id = cheese_id
         self.ranking = ranking

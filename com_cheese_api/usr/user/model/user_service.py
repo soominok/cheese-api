@@ -342,9 +342,9 @@ class UserService:
         
     # print(self.odf)
     # print(df)
-        sumdf = pd.concat([self.odf, df], axis=1)
-        print(sumdf)
-        return sumdf
+    sumdf = pd.concat([self.odf, df], axis=1)
+    print(sumdf)
+    return sumdf
 '''
 service = UserService()
 service.hook()

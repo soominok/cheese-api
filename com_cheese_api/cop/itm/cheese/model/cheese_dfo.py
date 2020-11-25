@@ -55,7 +55,7 @@ class CheeseDfo(object):
     # def cheese_data_refine(self, cheese):
 
         df = pd.DataFrame(cheese_data_frame)
-
+        # pandas에서 생성한 index 열 제거
         df.drop(df.columns[0], axis=1, inplace=True)
         df.drop('country', axis=1, inplace=True)
         df.drop('matching', axis=1, inplace=True)

@@ -44,10 +44,11 @@ class UserDfo:
         this = self.fileReader
         this.user = self.new_model(user) # payload
         print(this)
+        print(type(this.user))
 
         # this = UserDfo.user_gender_nominal(this)
         print(f'######## 중복값 제거 ##########')
-        this = UserDfo.drop_duplicate(this, 'user_id')
+        this = UserDfo.user_id_drop_duplicate(this, 'user_id')
         print(this)
         print(f'######## 중복값 제거 확인 ##########')
         # this = UserDfo.unique_id(this)
@@ -57,10 +58,6 @@ class UserDfo:
         print(f'{this.user.isnull().sum()}')
 
         this.user = this.user.dropna(axis = 0)
-        this.user.to_csv(os.path.join('com_cheese_api/usr/user/data', 'user3.csv'), index=False, encoding='utf-8-sig')
-       
-        # this.user = UserDfo.make_user_no(this.user)
-        this.user.to_csv(os.path.join('com_cheese_api/usr/user/data', 'user33.csv'), index=False, encoding='utf-8-sig')
         print(this)
 
         # this = UserDfo.make_name(this)
@@ -117,17 +114,12 @@ class UserDfo:
         print(f'{this.fname}')
         return pd.read_csv(Path(self.data, this.fname))
 
-    # @staticmethod
-    # def drop_feature(this, feature) -> object:
-    #     this.user = this.user.drop([feature], axis = 1)
-    #     return this
-
 
 
     ####################### 데이터 정제 #######################
     
     @staticmethod
-    def drop_duplicate(this, feature) -> object:
+    def user_id_drop_duplicate(this, feature) -> object:
         this.user = this.user.drop_duplicates(feature)
         return this
 
@@ -166,10 +158,12 @@ class UserDfo:
                 "솜", "공", "면", "탁", "온", "디", "항", "후", "려", "균", "묵", "송", "욱", "휴", "언", "령", "섬", "들", "견", "추", "걸", "삼",
                 "열", "웅", "분", "변", "양", "출", "타", "흥", "겸", "곤", "번", "식", "란", "더", "손", "술", "훔", "반", "빈", "실", "직", "흠",
                 "흔", "악", "람", "뜸", "권", "복", "심", "헌", "엽", "학", "개", "롱", "평", "늘", "늬", "랑", "얀", "향", "울", "련"]
+
         num_list = []
         name_list = []
+
         for num in range(40000):
-            name_no = num 
+            name_no = num
             rand_name = random.choice(last_name) + random.choice(first_name) + random.choice(first_name)
             num_list.append(name_no)
             name_list.append(rand_name)
@@ -200,7 +194,7 @@ class UserDfo:
     @staticmethod
     def make_email() -> object:
         email_address = [
-            "@naver.com", "@gamil.com"
+            "@naver.com", "@gmail.com"
         ]
         email_list = []
         for num in range(40000):
@@ -215,14 +209,14 @@ class UserDfo:
 
 '''
        user_no  user_id password gender  age name          phone             email
-0            0  2391853        1      M   40  길비충  010-8596-4444  kxx252@gamil.com
-1            1  1799897        1      F   40  노루술  010-5460-2136  mGX646@gamil.com
+0            0  2391853        1      M   40  길비충  010-8596-4444  kxx252@gmail.com
+1            1  1799897        1      F   40  노루술  010-5460-2136  mGX646@gmail.com
 2            2  1614947        1      F   50  황환아  010-2588-4300  QdK116@naver.com
-6            6  6523993        1      F   50  권새혼  010-6112-1808   TVM90@gamil.com
+6            6  6523993        1      F   50  권새혼  010-6112-1808   TVM90@gmail.com
 9            9   389215        1      F   50  여문하  010-8024-3524  TGa288@naver.com
 ...        ...      ...      ...    ...  ...  ...            ...               ...
-36866    36866     7361        1      F   40  손엄지  010-6324-2968  oqb402@gamil.com
-36868    36868  6159545        1      F   30  성흠채  010-4452-7120  LHU452@gamil.com
+36866    36866     7361        1      F   40  손엄지  010-6324-2968  oqb402@gmail.com
+36868    36868  6159545        1      F   30  성흠채  010-4452-7120  LHU452@gmail.com
 36869    36869  1942828        1      M   40  옥여선  010-2640-8088  GmY658@naver.com
 36871    36871  6284056        1      M   30  모요길  010-9656-8424  JNS754@naver.com
 36872    36872  1306045        1      F   40  김홍기  010-8248-7668   ZZK20@naver.com
@@ -231,18 +225,17 @@ class UserDfo:
 
 '''
        user_no  user_id password gender  age name          phone             email
-0            0  2391853        1      M   40  국제이  010-1111-1111  NBI948@gamil.com
+0            0  2391853        1      M   40  국제이  010-1111-1111  NBI948@gmail.com
 1            1  1799897        1      F   40  기더헌  010-1111-1111  voR668@naver.com
 2            2  1614947        1      F   50  손용치  010-1111-1111  MxE606@naver.com
 6            6  6523993        1      F   50  조종영  010-1111-1111  bkF708@naver.com
-9            9   389215        1      F   50  육휘상  010-1111-1111  keR876@gamil.com
+9            9   389215        1      F   50  육휘상  010-1111-1111  keR876@gmail.com
 ...        ...      ...      ...    ...  ...  ...            ...               ...
-36866    36866     7361        1      F   40  추으천  010-1111-1111  qfw212@gamil.com
-36868    36868  6159545        1      F   30  장선예  010-1111-1111  TQj288@gamil.com
+36866    36866     7361        1      F   40  추으천  010-1111-1111  qfw212@gmail.com
+36868    36868  6159545        1      F   30  장선예  010-1111-1111  TQj288@gmail.com
 36869    36869  1942828        1      M   40  채시실  010-1111-1111  bgG686@naver.com
 36871    36871  6284056        1      M   30  편혼부  010-1111-1111  jPt386@naver.com
 36872    36872  1306045        1      F   40  장전오  010-1111-1111   gVd70@naver.com
-
 [22270 rows x 8 columns]
 '''
 

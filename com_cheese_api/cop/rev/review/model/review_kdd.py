@@ -47,7 +47,7 @@ class ReviewKdd(object):
         # create a new chrome session
         options = Options()
 
-        driver = webdriver.Chrome(options=options, executable_path="/home/bitai/Documents/EMP_Team/EMP_Main/Ai/cheese_flask_proj/chromedriver_linux64/chromedriver")
+        driver = webdriver.Chrome(options=options, executable_path="com_cheese_api/chromedriver_linux64/chromedriver")
         driver.maximize_window()
 
         # 리뷰 페이지 주소
@@ -172,7 +172,7 @@ class ReviewKdd(object):
         # csv 파일 다운로드하기
         import csv
 
-        vid_csv_file = open("/home/bitai/Documents/EMP_Team/EMP_Main/Ai/cheese_flask_proj/data_set/cheese2pic_real_part10.csv", "w", newline = "")
+        vid_csv_file = open('com_cheese_api/cop/rev/review/data/cheese2pic_real_part10.csv', 'w', newline = '')
         vid_csv_writer = csv.writer(vid_csv_file)
 
 

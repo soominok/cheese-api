@@ -39,67 +39,66 @@ api = Api(app)
 
 
 # if __name__ == '__main__':
+
 with app.app_context():
 
     db.create_all()
-
+# User > Cheese > Order > Review
 # ================================= User =================================
     user_count = UserDao.count()
+    print(f'USER TABLE CNT : {user_count[0]:10}')
 
-    # print(f'USER TABLE CNT : {user_count[0]:10}')
-
-    # print(f'===== Users Total Count is {user_count} =====')
+    print(f'===== Users Total Count is {user_count} =====')
     if user_count[0] == 0:
         UserDao.bulk()
     else:
         print("Users Data exists...")
 
     # user_all = UserDao.find_all()
-    # print(f'insert 테스트!!')
+    print(f'insert 테스트!!')
     # print(f'===== Users Total Count is {user_all} =====')
     # UserDao.bulk()
     # user_all.bulk()
 
-
-# ================================= Order =================================
-
-    order_count = OrderDao.count()
-
-    # print(f'==========Order Data Insert!!!==========')
-    # print(f'===== Order Total Count is {order_count} =====')
-    if order_count[0] == 0:
-        OrderDao.bulk()
-    else:
-        print("Order data exists...")
-
-
 # ================================= Cheese =================================
     cheese_count = CheeseDao.count()
 
-    
-    # cheese_id =
     # cheese_find_one = CheeseDao.find_by_cheese(cheese_id)
     # print(f'===== Cheese find one {cheese_find_one} =====')
 
     # cheese_all = CheeseDao.find_all()
     # print(f'========Cheese all {cheese_all} ==========')
 
-    # print(f'==========Cheeses Data Insert!!!==========')
-    # print(f'===== Cheeses Total Count is {cheese_count} =====')
+    print(f'==========Cheeses Data Insert!!!==========')
+    print(f'===== Cheeses Total Count is {cheese_count} =====')
     if cheese_count[0] == 0:
         CheeseDao.bulk()
     else:
         print("Cheeses Data exists...")
 
 
+# ================================= Order =================================
+    print(f'==========Orders Data Insert!!!==========')
+    order_count = OrderDao.count()
+
+    if order_count[0] == 0:
+        OrderDao.bulk()
+    else:
+        print("Orders Data exists...")
+
 # ================================= Review =================================
-#     print(f'==========Reviews Data Insert!!!==========')
-#     # ReviewDao.bulk()
+    print(f'==========Reviews Data Insert!!!==========')
+    review_count = ReviewDao.count()
+
+    if review_count[0] == 0:
+        ReviewDao.bulk()
+    else:
+        print("Reviews Data exists...")
 
 
 initialize_routes(api)
 
-# print("========== main.py END ==========")
+print("========== main.py END ==========")
 
 
 
@@ -113,7 +112,6 @@ initialize_routes(api)
 # df = dfo.new()
 # print(f'치즈 Dfo 테스트\n\n', df.head(10))
 
-
 # =================================================
 # kdd = ReviewKdd()
 # temp = kdd.crawling()
@@ -121,8 +119,6 @@ initialize_routes(api)
 
 # dfo = ReviewDfo()
 # review_data_frame = dfo.review_df()
-# df = dfo.data_refine(review_data_frame)
+# df = dfo.review_df_refine(review_data_frame)
 # print("-------------------------------------")
 # print(df.head(10))
-
-    
