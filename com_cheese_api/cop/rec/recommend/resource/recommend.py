@@ -59,56 +59,56 @@ class Recommend(Resource):
             return {'message': 'User not found'}, 404
 
 
-    @staticmethod
-    def put(user_id: str):
-        """
-        서버에서 해당 ID 의 새로운 유저 정보를 받아온다.
-        정보를 토대로 해당 ID 유저의 정보를 바꿔서
-        정보를 서버에 보내준다.
-        parameter: 유저 아이디를 받아온다
-        return: 새로운 유저 데이터를 리턴 한다
-        """
-        print(f'[User Put Resource Enter]')        
-        parser = reqparse.RequestParser() 
-        parser.add_argument('user_id', type=str, required=True, help='This is user_id field')
-        parser.add_argument('password', type=str, required=True, help='This is password field')
-        parser.add_argument('name', type=str, required=True, help='This is name field')
-        parser.add_argument('gender', type=str, required=True, help='This is gender field')
-        parser.add_argument('age', type=str, required=True, help='This is age field')
-        parser.add_argument('phone')
-        parser.add_argument('email')
+    # @staticmethod
+    # def put(user_id: str):
+    #     """
+    #     서버에서 해당 ID 의 새로운 유저 정보를 받아온다.
+    #     정보를 토대로 해당 ID 유저의 정보를 바꿔서
+    #     정보를 서버에 보내준다.
+    #     parameter: 유저 아이디를 받아온다
+    #     return: 새로운 유저 데이터를 리턴 한다
+    #     """
+    #     print(f'[User Put Resource Enter]')        
+    #     parser = reqparse.RequestParser() 
+    #     parser.add_argument('user_id', type=str, required=True, help='This is user_id field')
+    #     parser.add_argument('password', type=str, required=True, help='This is password field')
+    #     parser.add_argument('name', type=str, required=True, help='This is name field')
+    #     parser.add_argument('gender', type=str, required=True, help='This is gender field')
+    #     parser.add_argument('age', type=str, required=True, help='This is age field')
+    #     parser.add_argument('phone')
+    #     parser.add_argument('email')
 
-        print("argument added")
+    #     print("argument added")
 
-        args = parser.parse_args()
-        print(f'User {args["user_id"]} updated')
-        print(f'User {args["password"]} updated')
+    #     args = parser.parse_args()
+    #     print(f'User {args["user_id"]} updated')
+    #     print(f'User {args["password"]} updated')
 
-        user = UserDto(args['user_id'],\
-                         args['password'],\
-                         args['name'],\
-                         args['gender'],\
-                         args['age'],\
-                         args['phone'],\
-                         args['email'])
+    #     user = UserDto(args['user_id'],\
+    #                      args['password'],\
+    #                      args['name'],\
+    #                      args['gender'],\
+    #                      args['age'],\
+    #                      args['phone'],\
+    #                      args['email'])
 
-        print("User created")
-        UserDao.update(args)
-        # data = user.json()
+    #     print("User created")
+    #     UserDao.update(args)
+    #     # data = user.json()
         
-        return args, 200
+    #     return args, 200
 
-    @staticmethod
-    def delete(user_id: str):
-        """
-        유저 아이디를 받아와 해당 유저를 삭제한다.
-        Parameter: 유저 아이디
-        """
-        # UserDao.delete(id)
-        # print(f'User {id} Deleted')
-        print(f'[ User Delete Resource Enter ]')
-        args = parser.parse_args()
-        print(args)
-        UserDao.delete(user_id)
-        # print(f'User {args["user_id"]} deleted')
-        return {'code': 0, 'message': 'DELETE SUCCESS'}, 200
+    # @staticmethod
+    # def delete(user_id: str):
+    #     """
+    #     유저 아이디를 받아와 해당 유저를 삭제한다.
+    #     Parameter: 유저 아이디
+    #     """
+    #     # UserDao.delete(id)
+    #     # print(f'User {id} Deleted')
+    #     print(f'[ User Delete Resource Enter ]')
+    #     args = parser.parse_args()
+    #     print(args)
+    #     UserDao.delete(user_id)
+    #     # print(f'User {args["user_id"]} deleted')
+    #     return {'code': 0, 'message': 'DELETE SUCCESS'}, 200
