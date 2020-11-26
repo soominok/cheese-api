@@ -14,7 +14,7 @@ config = {
     'host': '127.0.0.1',
     'port': '3306',
     'database': 'com_cheese_api',
-    'auth_plugin': 'mysql_native_password'
+    'auth_plugin': 'mysql_native_password',
 }
 
 charset = {'utf8':'utf8'}

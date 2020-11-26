@@ -19,7 +19,7 @@ from com_cheese_api.cop.rev.review.model.review_dto import ReviewVo
 from com_cheese_api.cop.rev.review.resource.review import Review, Reviews
 
 from com_cheese_api.cop.chat.chatbot.resource.chatbot import Chatbot
-
+from com_cheese_api.cop.rec.recommend.resource.recommend import Recommend
 
 
 
@@ -53,13 +53,12 @@ reviews = Blueprint('reviews', __name__, url_prefix='/api/reviews')
 
 
 # ================================= Chatbot =================================
-chatbot = Blueprint('chatbot', __name__, url_prefix='/api/chatbot/<user_id>')
+chatbot = Blueprint('chatbot', __name__, url_prefix='/api/chatbot/')
 
 
-############################## RECOMMEND ##############################
-# recommend = Blueprint('recommend', __name__, url_prefix='/api/recommend')
+# ================================= Chatbot =================================
+recommend = Blueprint('recommend', __name__, url_prefix='/api/recommend')
 
-# api = Api(chatbot)
 
 
 
@@ -87,6 +86,7 @@ api = Api(reviews)
 
 api = Api(chatbot)
 
+api = Api(recommend)
 
 ####################################################################
 
@@ -122,10 +122,11 @@ def initialize_routes(api):
     api.add_resource(Reviews, '/api/reviews')
 
 
-############################## CHATBOT ############################## 
+    # ================================= Chatbot =================================
     api.add_resource(Chatbot, '/api/chatbot')
 
-
+    # ================================= Chatbot =================================
+    api.add_resource(Recommend, '/api/recommend')
 
 
 @home.errorhandler(500)
@@ -162,6 +163,17 @@ def order_api_error(e):
 def review_api_error(e):
     logging.exception('An error occurred during cheeses request. %s' % str(e))
     return 'An internal error occurred.', 500
+
+@chatbot.errorhandler(500)
+def review_api_error(e):
+    logging.exception('An error occurred during cheeses request. %s' % str(e))
+    return 'An internal error occurred.', 500
+
+@recommend.errorhandler(500)
+def review_api_error(e):
+    logging.exception('An error occurred during cheeses request. %s' % str(e))
+    return 'An internal error occurred.', 500
+  
 
 
 

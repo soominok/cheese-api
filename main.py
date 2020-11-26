@@ -18,8 +18,7 @@ from com_cheese_api.cop.itm.cheese.model.cheese_dao import CheeseDao
 # from com_cheese_api.cop.rev.review.model.review_dto import ReviewDto
 from com_cheese_api.cop.rev.review.model.review_dao import ReviewDao
 
-from flask_cors import CORS
-
+from flask_cors import CORS,cross_origin
 
 Session = openSession()
 session = Session()
@@ -27,7 +26,7 @@ session = Session()
 
 app = Flask(__name__)
 CORS(app, resources={r'/api/*': {"origins": "*"}})
-
+CORS(app, resources={r'/api/*': {"origins": "http://localhost:3000"}})
 
 app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

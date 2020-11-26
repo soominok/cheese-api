@@ -24,7 +24,25 @@ yarn-error.log*
 
 # Custom ingnore
 .vscode/
-data_set/.ipynb_checkpoints/
+
 __pycache__
 com_cheese_api.egg-info/
 private_run.py
+recommend_dfo.py
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+
+# pyenv
+.python-version
+
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/

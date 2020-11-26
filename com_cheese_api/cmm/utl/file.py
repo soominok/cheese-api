@@ -27,9 +27,8 @@ class FileReader:
         print(f'PANDAS VERSION: {pd.__version__}')
         return pd.read_excel(self.new_file(), header = header, usecols = usecols)
 
-    def create_gmaps(self):
-        # return googlemaps.Client(key='')
-        return ...
+    def csv_load(self, filePath, encoding):
+        return pd.read_csv(os.path.abspath(filePath), encoding = encoding, index_col=[0])
 
     def json_load(self):
         return json.load(open(self.new_file(), encoding='UTF-8'))

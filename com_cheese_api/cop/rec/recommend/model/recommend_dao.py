@@ -1,5 +1,4 @@
-from com_cheese_api.usr.user.model.user_dto import UserDto
-from com_cheese_api.usr.user.model.user_dfo import UserDfo
+from com_cheese_api.cop.rec.recommend.model.recommend_dto import RecommendDto
 from pathlib import Path
 from com_cheese_api.ext.db import url, db, openSession, engine
 import matplotlib.pyplot as plt
@@ -19,15 +18,15 @@ session = Session()
 class RecommendDao(RecommendDto):
     @staticmethod
     def save(recommend):
-        session.add(user)
+        session.add(recommend)
         session.commit()
 
     @classmethod
     def update(cls, recommend):
         session.query(cls).filter(cls.recommend_id == recommend['recommen_id'])\
-                                .update({cls.tasty: recommend['tasty'],\
-                                        cls.texture: recommend['texture'],\
-                                        cls.user_id: recommend['user_id'])
+                                .update({cls.chooseFood_1: recommend['chooseFood_1'],\
+                                        cls.chooseFood_2: recommend['chooseFood_2'],\
+                                        cls.user_id: recommend['user_id']})
         session.commit()
         session.close()
 

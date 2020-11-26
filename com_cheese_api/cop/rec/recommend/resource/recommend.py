@@ -34,9 +34,10 @@ class Recommend(Resource):
         # create 구현
         recommend = RecommendDto(**body)
         RecommendDao.save(recommend)
-        recommend_id = recommend.recommend_id
+        # recommend_id = recommend.recommend_id
 
-        return {'message': 'SUCCESS', 'recommend_id': str(recommend_id)}, 200
+        # return {'message': 'SUCCESS', 'recommend_id': str(recommend_id)}, 200
+        return {'message': 'SUCCESS'}, 200   
 
     @staticmethod
     def get(user_id: str):
