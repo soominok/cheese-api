@@ -70,7 +70,7 @@ class RecommendVo():
     chooseFood_1: str = ''
     chooseFood_2: str = ''
     chooseFood_3: str=''
-    cheese_Food_4: srt=''
+    cheese_Food_4: str=''
 
 
 

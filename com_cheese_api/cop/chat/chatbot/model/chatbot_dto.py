@@ -15,6 +15,7 @@ class ChatbotDto(db.Model):
     chatbot_id: str = db.Column(db.String(20), primary_key=True, index=True)
     tasty: str = db.Column(db.String(5))
     texture: str = db.Column(db.String(5))
+    feeling: str = db.Column(db.String(5))
     # user_id = db.Column(db.String(20), db.ForeignKey(UserDto.user_id)) # FK(user_id)
 
     # orders = db.relationship('OrderDto', back_populates='user', lazy='dynamic')
@@ -24,17 +25,20 @@ class ChatbotDto(db.Model):
     # 관계 설정
     #reviews = db.relationship('ReviewDto', back_populates='users')
 
-    def __init__(self, chatbot_id, tasty, texture):
+    def __init__(self, chatbot_id, tasty, texture, feeling):
         self.chatbot_id = chatbot_id
         self.tasty = tasty
         self.texture = texture
+        self.feeling
 
 
     def __repr__(self):
-        return f'chatbot_id={self.chatbot_id}, tasty={self.tasty}, texture={self.texture}'
+        return f'chatbot_id={self.chatbot_id}, tasty={self.tasty}, texture={self.texture}, \
+            feeling={self.feeling}'
 
     def __str__(self):
-        return f'chatbot_id={self.chatbot_id}, tasty={self.tasty}, texture={self.texture}'
+        return f'chatbot_id={self.chatbot_id}, tasty={self.tasty}, texture={self.texture}, \
+            feeling={self.feeling}'
 
     @property
     def json(self):
@@ -43,6 +47,7 @@ class ChatbotDto(db.Model):
             'chatbot_id' : self.chatbot_id,
             'tasty': self.tasty,
             'texture': self.texture,
+            'feeling': self.feeling
         }
 
 # Json 형태로 쓰기 위해 씀!
@@ -51,6 +56,7 @@ class ChatbotVo():
     chatbot_id: str = ''
     tasty: str = ''
     texture: str = ''
+    feeling: str= ''
 
 
 
