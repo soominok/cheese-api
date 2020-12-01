@@ -26,7 +26,7 @@ yarn-error.log*
 .vscode/
 
 __pycache__
-com_cheese_api.egg-info/
+com_cheese_api.egg-info
 private_run.py
 recommend_dfo.py
 

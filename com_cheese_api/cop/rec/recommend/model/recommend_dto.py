@@ -16,7 +16,7 @@ class RecommendDto(db.Model):
     chooseFood_1: str = db.Column(db.String(100))
     chooseFood_2: str = db.Column(db.String(100))
     chooseFood_3: str = db.Column(db.String(100))
-    cheese_Food_4: str = db.Column(db.String(100))
+    chooseFood_4: str = db.Column(db.String(100))
     # user_id = db.Column(db.String(20), db.ForeignKey(UserDto.user_id)) # FK(user_id)
     
 
@@ -27,13 +27,13 @@ class RecommendDto(db.Model):
     # 관계 설정
     #reviews = db.relationship('ReviewDto', back_populates='users')
 
-    def __init__(self, user_id, chooseFood_1, chooseFood_2, chooseFood_3, cheese_Food_4):
+    def __init__(self, user_id, chooseFood_1, chooseFood_2, chooseFood_3, chooseFood_4):
         # self.recommend_id = recommend_id
         self.user_id = user_id
         self.chooseFood_1 = chooseFood_1
         self.chooseFood_2 = chooseFood_2
         self.chooseFood_3 = chooseFood_3
-        self.cheese_Food_4 = cheese_Food_4
+        self.chooseFood_4 = chooseFood_4
 
 
     # def __repr__(self):
@@ -46,11 +46,11 @@ class RecommendDto(db.Model):
 
         def __repr__(self):
             return f'user_id = {self.user_id}chooseFood_1={self.chooseFood_1}, chooseFood_2={self.chooseFood_2}, \
-                chooseFood_3={self.chooseFood_3}, cheese_Food_4={self.cheese_Food_4}'
+                chooseFood_3={self.chooseFood_3}, chooseFood_4={self.chooseFood_4}'
 
     def __str__(self):
         return f'user_id = {self.user_id}, chooseFood_1={self.chooseFood_1}, chooseFood_2={self.chooseFood_2}, \
-                chooseFood_3={self.chooseFood_3}, cheese_Food_4={self.cheese_Food_4}'
+                chooseFood_3={self.chooseFood_3}, chooseFood_4={self.chooseFood_4}'
 
     @property
     def json(self):
@@ -60,7 +60,7 @@ class RecommendDto(db.Model):
             'chooseFood_1': self.chooseFood_1,
             'chooseFood_2': self.chooseFood_2,
             'chooseFood_3': self.chooseFood_3,
-            'cheese_Food_4': self.cheese_Food_4
+            'chooseFood_4': self.chooseFood_4
         }
 
 # Json 형태로 쓰기 위해 씀!
@@ -70,7 +70,7 @@ class RecommendVo():
     chooseFood_1: str = ''
     chooseFood_2: str = ''
     chooseFood_3: str=''
-    cheese_Food_4: str=''
+    chooseFood_4: str=''
 
 
 
