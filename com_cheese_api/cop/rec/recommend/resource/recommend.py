@@ -1,5 +1,7 @@
 from com_cheese_api.cop.rec.recommend.model.recommend_dto import RecommendDto
 from com_cheese_api.cop.rec.recommend.model.recommend_dao import RecommendDao
+from com_cheese_api.cop.rec.recommend.model.recommend_ai import RecommendAi
+from com_cheese_api.cop.rec.recommend.model.recommend_dfo import RecommendDfo
 
 from com_cheese_api.cmm.utl.file import FileReader
 
@@ -35,28 +37,39 @@ class Recommend(Resource):
         recommend = RecommendDto(**body)
         RecommendDao.save(recommend)
         # recommend_id = recommend.recommend_id
+        query = """
+            SELECT * FROM recommends
+        """
+        RecommendDfo().dump_to_csv(query)
 
         # return {'message': 'SUCCESS', 'recommend_id': str(recommend_id)}, 200
         return {'message': 'SUCCESS'}, 200   
 
-    @staticmethod
-    def get(user_id: str):
-        """
-        유저 아이디를 받아와 해당 유저 객채를 리턴한다
-        Parameter: User ID 를 받아온다
-        return: 해당 아이디 유저 객체
-        """
-        print('===========user_id=============')
-        print(user_id)
-        try:
-            print(f'User ID is {user_id}')
-            recommend = RecommendDao.find_by_id(user_id)
+
+    # @staticmethod
+    # def get(user_id: str):
+    #     try:
+    #         print(f'Usre ID is {user_id}')
+    #         recommend = RecommendAi.
+
+    # @staticmethod
+    # def get(user_id: str):
+    #     """
+    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
+    #     Parameter: User ID 를 받아온다
+    #     return: 해당 아이디 유저 객체
+    #     """
+    #     print('===========user_id=============')
+    #     print(user_id)
+    #     try:
+    #         print(f'User ID is {user_id}')
+    #         recommend = RecommendDao.find_by_id(user_id)
             
-            if recommend:
-                return jsonify([recommend.json])
-        except Exception as e:
-            print(e)
-            return {'message': 'User not found'}, 404
+    #         if recommend:
+    #             return jsonify([recommend.json])
+    #     except Exception as e:
+    #         print(e)
+    #         return {'message': 'User not found'}, 404
 
 
     # @staticmethod
@@ -112,3 +125,5 @@ class Recommend(Resource):
     #     UserDao.delete(user_id)
     #     # print(f'User {args["user_id"]} deleted')
     #     return {'code': 0, 'message': 'DELETE SUCCESS'}, 200
+
+ 
