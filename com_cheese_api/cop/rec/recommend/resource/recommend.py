@@ -2,7 +2,7 @@ from com_cheese_api.cop.rec.recommend.model.recommend_dto import RecommendDto
 from com_cheese_api.cop.rec.recommend.model.recommend_dao import RecommendDao
 from com_cheese_api.cop.rec.recommend.model.recommend_ai import RecommendAi
 from com_cheese_api.cop.rec.recommend.model.recommend_dfo import RecommendDfo
-
+from com_cheese_api.cop.itm.cheese.model.cheese_dao import CheeseDao
 from com_cheese_api.cmm.utl.file import FileReader
 
 import numpy as np
@@ -36,21 +36,39 @@ class Recommend(Resource):
         # create 구현
         recommend = RecommendDto(**body)
         RecommendDao.save(recommend)
-        # recommend_id = recommend.recommend_id
-        query = """
-            SELECT * FROM recommends
-        """
-        RecommendDfo().dump_to_csv(query)
-
+        # userId = recommend.user_id
+        # print(f'user_id : {recommend.user_id}')
+        # query = """
+        #     SELECT * FROM recommends WHERE user_id = %(userId)s
+        # """
+        # RecommendAi().preprocessing_data(query, userId)
+        # RecommendAi().recommend_cheese(query, userId)
         # return {'message': 'SUCCESS', 'recommend_id': str(recommend_id)}, 200
         return {'message': 'SUCCESS'}, 200   
 
 
-    # @staticmethod
-    # def get(user_id: str):
-    #     try:
-    #         print(f'Usre ID is {user_id}')
-    #         recommend = RecommendAi.
+    @staticmethod
+    def get(user_id: str):
+        userId = user_id
+        print(f'userId : {userId}')
+        try:
+            print(f'Usre ID is {user_id}')
+            query = """
+                SELECT * FROM recommends WHERE user_id = %(userId)s
+            """
+            pred_code = RecommendAi().recommend_cheese(query, userId)
+            pred_code_str = "".join(map(str, pred_code))
+            print(f'pred_code_str: {pred_code_str}')
+            recommend_cheese_code = 'p' + pred_code_str
+            print(f'recommend_cheese_code : {recommend_cheese_code}')
+
+            recommend_cheese_info = CheeseDao.find_by_cheese(recommend_cheese_code)
+            if recommend_cheese_info:
+                return jsonify([recommend_cheese_info.json])
+        except Exception as e:
+            print(e)
+            return {'message': 'Recommend not found'}, 404
+            
 
     # @staticmethod
     # def get(user_id: str):

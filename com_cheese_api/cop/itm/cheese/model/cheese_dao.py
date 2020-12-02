@@ -80,10 +80,6 @@ class CheeseDao(CheeseDto):
         return session.query(cls).filter(cls.category.like(f'%{category}%')).all()
 
     # @classmethod
-    # def find_by_name(cls, name):
-    #     return cls.query.filter_by(name == name).all()
-
-    # @classmethod
     # def update(cls, cheese):
     #     session.query(cls).filter(cls.cheese_id == cheese['cheese_id'])\
     #         .update({cls.ranking:cheese['ranking'],\
