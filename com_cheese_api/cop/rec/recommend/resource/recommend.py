@@ -72,11 +72,6 @@ class Recommend(Resource):
 
     # @staticmethod
     # def get(user_id: str):
-    #     """
-    #     유저 아이디를 받아와 해당 유저 객채를 리턴한다
-    #     Parameter: User ID 를 받아온다
-    #     return: 해당 아이디 유저 객체
-    #     """
     #     print('===========user_id=============')
     #     print(user_id)
     #     try:
@@ -131,10 +126,6 @@ class Recommend(Resource):
 
     # @staticmethod
     # def delete(user_id: str):
-    #     """
-    #     유저 아이디를 받아와 해당 유저를 삭제한다.
-    #     Parameter: 유저 아이디
-    #     """
     #     # UserDao.delete(id)
     #     # print(f'User {id} Deleted')
     #     print(f'[ User Delete Resource Enter ]')
