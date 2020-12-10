@@ -33,8 +33,10 @@ recommend_dfo.py
 /data
 
 # Jupyter Notebook
-.ipynb_checkpoints
-
+/.ipynb_checkpoints
+tf-cheese-modeling.ipynb
+tf-user-cheese-origin-data.ipynb
+UserInfo-ipynb_checkpoint.ipynb
 
 # pyenv
 .python-version
