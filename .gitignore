@@ -29,7 +29,10 @@ __pycache__
 com_cheese_api.egg-info
 private_run.py
 
-./data
+com_cheese_api/itm/cheese/data
+com_cheese_api/ord/order/data
+com_cheese_api/rev/review/data
+com_cheese_api/usr/user/data
 
 # Jupyter Notebook
 /.ipynb_checkpoints
