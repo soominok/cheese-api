@@ -10,7 +10,7 @@ db = SQLAlchemy()
 
 config = {
     'user': 'bitai',
-    'password': '456123',
+    'password': 'password',
     'host': '127.0.0.1',
     'port': '3306',
     'database': 'com_cheese_api',
