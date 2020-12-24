@@ -27,6 +27,7 @@ yarn-error.log*
 
 __pycache__
 com_cheese_api.egg-info
+
 private_run.py
 
 com_cheese_api/itm/cheese/data
