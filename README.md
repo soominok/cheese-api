@@ -7,26 +7,26 @@
 
 --- 
 
-## 프로젝트 개발환경
+### 프로젝트 개발환경
 
 - Linux : 5.4.0
 - Window 10
 - Python : 3.7
 
-### [API]
+#### [API]
 - Flask : 1.1.2
 - Flask_restful : 0.3.8
 - Flask-SQLAlchemy : 2.4.3
 - pymysql : 0.10.1
 
-### [AI]
+#### [AI]
 - sklearn : 0.23.1
 - tensorflow : 2.3.1
 - keras : 2.4.3
 - matplotlib : 
 - seaborn : 0.10.1
 
-### [UI]
+#### [UI]
 - react : 16.13.1
 - react-redux : 7.2.2
 - redux : 4.0.5
@@ -34,4 +34,4 @@
 
 --- 
 
-## 프로젝트 기능 소개
+### 프로젝트 기능 소개
